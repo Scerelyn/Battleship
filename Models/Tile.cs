@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace BattleShip.Models
 {
-    public enum TileState
+    /// <summary>
+    /// Tile pieces with each state possible
+    /// </summary>
+    public enum Tile
     {
         Normal,Missed,Hit,ShipHere
     }

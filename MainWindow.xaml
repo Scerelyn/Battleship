@@ -5,17 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BattleShip"
         mc:Ignorable="d"
-        Title="Battleship" Height="460" Width="900">
-    <StackPanel x:Name="MainStackPanel" Orientation="Horizontal" Background="LightSteelBlue">
-        <StackPanel x:Name="HitAreaStackPanel"
-                    MinHeight="400"
-                    MinWidth="400"
-                    Margin="10 10 5 10"
-                    Background="AliceBlue"/>
-        <StackPanel x:Name="PlayerShipAreaStackPanel"
-                    MinHeight="400"
-                    MinWidth="400"
-                    Margin="5 10 10 10"
-                    Background="AliceBlue"/>
+        Title="Battleship" SizeToContent="WidthAndHeight">
+    <StackPanel>
+        <Menu>
+            <MenuItem Header="File"/>
+            <MenuItem Header="Game Settings"/>
+            <MenuItem Header="Debug"/>
+        </Menu>
+        <StackPanel x:Name="MainStackPanel" Orientation="Horizontal" Background="LightSteelBlue">
+            <StackPanel x:Name="HitAreaStackPanel"
+                        MinHeight="400"
+                        MinWidth="400"
+                        Margin="10 10 5 10"
+                        Background="AliceBlue"/>
+            <StackPanel x:Name="PlayerShipAreaStackPanel"
+                        MinHeight="400"
+                        MinWidth="400"
+                        Margin="5 10 10 10"
+                        Background="AliceBlue"/>
+        </StackPanel>
     </StackPanel>
 </Window>

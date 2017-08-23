@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace BattleShip.Models
 {
+    /// <summary>
+    /// Ship objects
+    /// </summary>
     public class Ship
     {
         public int Length { get; private set; }
