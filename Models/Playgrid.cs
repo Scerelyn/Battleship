@@ -12,10 +12,14 @@ namespace BattleShip.Models
     /// </summary>
     public class Playgrid : INotifyPropertyChanged
     {
+        public int Height { get; private set; }
+        public int Width { get; private set; }
         private Tile[,] Grid { get; set; }
 
         public Playgrid(int x, int y)
         {
+            Height = y;
+            Width = x;
             Grid = new Tile[x, y];
             for (int i = 0; i < Grid.GetLength(0); i++)
             {
@@ -35,6 +39,22 @@ namespace BattleShip.Models
         {
             Grid[x, y] = state;
             FieldChanged();
+        }
+
+        /// <summary>
+        /// Gets the Tile at a specified x,y coordinate
+        /// Will throw an ArgumentExcption if the coordinates are out of bounds
+        /// </summary>
+        /// <param name="x">The x coordinate to check</param>
+        /// <param name="y">The y coordinate to check</param>
+        /// <returns>A tile at the given point</returns>
+        public Tile ValueAt(int x, int y)
+        {
+            if (x >= Grid.GetLength(0) || x < 0 || y < 0 || y >= Grid.GetLength(1))
+            {
+                throw new ArgumentException("Cannot get a Tile value, argument out of range");
+            }
+            return Grid[x, y];
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
