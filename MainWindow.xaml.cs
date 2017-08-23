@@ -1,5 +1,7 @@
-﻿using System;
+﻿using BattleShip.Logical;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +25,9 @@ namespace BattleShip
         public MainWindow()
         {
             InitializeComponent();
+            //GameData d = GameData.LoadData(Directory.GetCurrentDirectory() + "/file.dat");//new GameData();
+            //d.SaveData(Directory.GetCurrentDirectory() + "/file.dat");
+            //MessageBox.Show(d.PlayerShips.ValueAt(1,1)+"");
         }
     }
 }

@@ -1,12 +1,15 @@
 ﻿using BattleShip.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BattleShip.Logical
 {
+    [Serializable]
     /// <summary>
     /// Stores playgrids for the player and enemy and handles operations on them
     /// </summary>
@@ -15,24 +18,24 @@ namespace BattleShip.Logical
         /// <summary>
         /// The Player's ships, also acts as their own view of their ship, with enemy activity shown
         /// </summary>
-        Playgrid PlayerShips { get; set; } = new Playgrid(10, 10);
+        public Playgrid PlayerShips { get; set; } = new Playgrid(10, 10);
 
         /// <summary>
         /// The Enemies ships, acting as their own view of the player's activity
         /// </summary>
-        Playgrid EnemyShips { get; set; } = new Playgrid(10, 10);
+        public Playgrid EnemyShips { get; set; } = new Playgrid(10, 10);
 
         /// <summary>
         /// The player view of the enemy's ships
         /// Enemy ShipHere tiles will be obfuscated unless hit
         /// </summary>
-        Playgrid PlayerViewEnemyShips { get; set; } = new Playgrid(10, 10);
+        public Playgrid PlayerViewEnemyShips { get; set; } = new Playgrid(10, 10);
 
         /// <summary>
         /// The enemy's view of the player's ships
         /// Player ShipHere tiles will be obfuscated unless hit
         /// </summary>
-        Playgrid EnemyViewPlayerShips { get; set; } = new Playgrid(10, 10);
+        public Playgrid EnemyViewPlayerShips { get; set; } = new Playgrid(10, 10);
 
         /// <summary>
         /// Places a ship on the respective grid at the respective x,y location.
@@ -110,6 +113,23 @@ namespace BattleShip.Logical
                 }
             }
             return hit;
+        }
+
+        public void SaveData(string filepath)
+        {
+            Stream stream = File.Open(filepath, FileMode.Create);
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(stream, this);
+            stream.Close();
+        }
+
+        public static GameData LoadData(string filepath)
+        {
+            Stream stream = File.Open(filepath, FileMode.Open);
+            BinaryFormatter formatter = new BinaryFormatter();
+            GameData loaded = (GameData)formatter.Deserialize(stream);
+            stream.Close();
+            return loaded;
         }
     }
 

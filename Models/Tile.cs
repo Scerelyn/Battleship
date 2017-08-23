@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace BattleShip.Models
 {
+    [Serializable]
     /// <summary>
     /// Tile pieces with each state possible
     /// </summary>

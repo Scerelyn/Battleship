@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace BattleShip.Models
 {
+    [Serializable]
     /// <summary>
     /// Refers to one grid with Tiles. Player 'computer' thingys use two
     /// </summary>
