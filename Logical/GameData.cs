@@ -58,20 +58,20 @@ namespace BattleShip.Logical
         /// <param name="y">The y coordinate to place on</param>
         public void PlaceShip(Ship s, Playgrid pg, int x, int y)
         {
-            s.Tiles = new Tile[s.Length];
-            if (IsValidPlacement(s,pg,x,y) && !IsShipHere(pg,x,y))
+            if (IsValidPlacement(s,pg,x,y) && !IsShipHere(pg,x,y) && !IsCollisionPresent(pg))
             {
-                if (s.IsVertical)
+                s.Tiles = new Tile[s.Length];
+                if (!s.IsVertical)
                 {
-                    for (int i = 0; i < pg.Height; i++)
+                    for (int i = 0; i < s.Length; i++)
                     {
-                        pg.ChangeTile(x,y+i,TileState.ShipHere);
+                        pg.ChangeTile(x + i, y, TileState.ShipHere);
                         s.Tiles[i] = pg.Grid[x + i, y];
                     }
                 }
                 else
                 {
-                    for (int i = 0; i < pg.Width; i++)
+                    for (int i = 0; i < s.Length; i++)
                     {
                         pg.ChangeTile(x, y + i, TileState.ShipHere);
                         s.Tiles[i] = pg.Grid[x, y + i];
@@ -93,7 +93,6 @@ namespace BattleShip.Logical
             {
                 return;
             }
-            s.Tiles = new Tile[s.Length];
             bool inBounds = (x >= 0 && y >= 0) && (x < pg.Width && y < pg.Height); //isValid limits the bounds further because of ship length, need a bool for 'normal' out of bounds
             if (inBounds)
             {
@@ -213,7 +212,7 @@ namespace BattleShip.Logical
         /// <returns></returns>
         public bool IsShipHere(Playgrid pg, int x, int y)
         {
-            if (pg.ValueAt(x, y) != TileState.ShipHere || pg.ValueAt(x, y) != TileState.PreviewCollision)
+            if (pg.ValueAt(x, y) == TileState.ShipHere || pg.ValueAt(x, y) == TileState.PreviewCollision)
             {
                 return true;
             }
@@ -221,6 +220,26 @@ namespace BattleShip.Logical
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Checks to see if any placement collisions exist when previewing
+        /// </summary>
+        /// <param name="pg">The Playgrid instance to check</param>
+        /// <returns>True if any collisions are found, false if non are present</returns>
+        public bool IsCollisionPresent(Playgrid pg)
+        {
+            for (int i = 0; i < pg.Width; i++)
+            {
+                for (int j = 0; j < pg.Height; j++)
+                {
+                    if (pg.ValueAt(i,j) == TileState.PreviewCollision)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         /// <summary>

@@ -97,7 +97,13 @@ namespace BattleShip
                         }
                         //MessageBox.Show($"{mouseX},{mouseY}");
                     };
-                    r.MouseDown += DoPlaceShip;
+                    r.MouseLeftButtonDown += DoPlaceShip;
+                    r.MouseRightButtonDown += (sender, args) =>
+                    {
+                        activePlaceShip.IsVertical = !activePlaceShip.IsVertical;
+                        usedData.RevertPreviewChanges(usedData.PlayerShipsGrid);
+                        usedData.PreviewShipPlace(activePlaceShip, usedData.PlayerShipsGrid, mouseX, mouseY);
+                    };
                     sp.Children.Add(r);
                 }
                 PlayerShipAreaStackPanel.Children.Add(sp);
@@ -106,16 +112,18 @@ namespace BattleShip
 
         public async void PlayerPlacesShips()
         {
-            
             isPlacingShips = true;
 
             foreach (Ship s in usedData.PlayerShips)
             {
                 activePlaceShip = s;
-                await WhenClicked(PlayerShipAreaStackPanel);
+                while (activePlaceShip.Tiles == null) {
+                    await WhenClicked(PlayerShipAreaStackPanel); //will repeated wait for each left mouse down until the ship is actually placed
+                }
             }
 
             isPlacingShips = false;
+            activePlaceShip = null;
         }
 
         public static Task WhenClicked(StackPanel target)
@@ -124,17 +132,26 @@ namespace BattleShip
             MouseButtonEventHandler onClick = null;
             onClick = (sender, e) =>
             {
-                target.MouseDown -= onClick;
+                target.MouseLeftButtonDown -= onClick;
                 tcs.TrySetResult(null);
             };
-            target.MouseDown += onClick;
+            target.MouseLeftButtonDown += onClick;
             return tcs.Task;
         }
 
         public void DoPlaceShip(object sender, RoutedEventArgs args)
         {
-            MessageBox.Show($"placed {mouseX} {mouseY}");
-            usedData.PlaceShip(activePlaceShip, usedData.PlayerShipsGrid, mouseX, mouseY);
+            if (activePlaceShip != null && isPlacingShips)
+            {
+                usedData.PlaceShip(activePlaceShip, usedData.PlayerShipsGrid
+                    , mouseX > usedData.PlayerShipsGrid.Width - activePlaceShip.Length && !activePlaceShip.IsVertical //when the mouse is in the rightmost/bottommost spot, PlaceShip wont run from the IsValidPlacement check, so the altered 'edge' point will need to be sent in
+                        ? usedData.PlayerShipsGrid.Width - activePlaceShip.Length
+                        : mouseX
+                    , mouseY > usedData.PlayerShipsGrid.Height - activePlaceShip.Length && activePlaceShip.IsVertical
+                        ? usedData.PlayerShipsGrid.Height - activePlaceShip.Length
+                        : mouseY
+                );
+            }
         }
 
         public void RevealEnemy()
