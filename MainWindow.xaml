@@ -6,18 +6,20 @@
         xmlns:local="clr-namespace:BattleShip"
         mc:Ignorable="d"
         Title="Battleship" SizeToContent="WidthAndHeight">
-    <StackPanel>
+    <StackPanel x:Name="BaseStackPanel">
         <Menu>
             <MenuItem Header="File"/>
             <MenuItem Header="Game Settings"/>
             <MenuItem Header="Debug"/>
         </Menu>
         <StackPanel x:Name="MainStackPanel" Orientation="Horizontal" Background="LightSteelBlue">
+            <Label Content="Enemy Field"/>
             <StackPanel x:Name="HitAreaStackPanel"
                         MinHeight="400"
                         MinWidth="400"
                         Margin="10 10 5 10"
                         Background="AliceBlue"/>
+            <Label Content="Your field"/>
             <StackPanel x:Name="PlayerShipAreaStackPanel"
                         MinHeight="400"
                         MinWidth="400"

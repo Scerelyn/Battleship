@@ -12,7 +12,7 @@ namespace BattleShip.Converters
 {
     public class TileToBrush : IValueConverter
     {
-        Brush Normal { get; set; } = Brushes.DodgerBlue;
+        Brush Normal { get; set; } = Brushes.Blue;
         Brush Hit { get; set; } = Brushes.Red;
         Brush Missed { get; set; } = Brushes.White;
         Brush ShipHere { get; set; } = Brushes.DarkGray;
@@ -22,19 +22,19 @@ namespace BattleShip.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             Brush b = null;
-            Tile t = (Tile)value;
+            TileState t = (TileState)value;
             switch (t)
             {
-                case Tile.Normal:
+                case TileState.Normal:
                     b = Normal;
                     break;
-                case Tile.Missed:
+                case TileState.Missed:
                     b = Missed;
                     break;
-                case Tile.Hit:
+                case TileState.Hit:
                     b = Hit;
                     break;
-                case Tile.ShipHere:
+                case TileState.ShipHere:
                     b = IsObfuscated ? Normal : ShipHere;
                     break;
                 default:

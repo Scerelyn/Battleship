@@ -7,8 +7,11 @@ using System.Threading.Tasks;
 namespace BattleShip.Models
 {
     [Serializable]
-    public class Tile
+    /// <summary>
+    /// Tile pieces with each state possible
+    /// </summary>
+    public enum TileState
     {
-        public TileState State { get; set; } = TileState.Normal;
+        Normal,Missed,Hit,ShipHere
     }
 }

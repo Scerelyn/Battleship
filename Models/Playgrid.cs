@@ -15,7 +15,7 @@ namespace BattleShip.Models
     {
         public int Height { get; private set; }
         public int Width { get; private set; }
-        private Tile[,] Grid { get; set; }
+        public Tile[,] Grid { get; private set; }
 
         public Playgrid(int x, int y)
         {
@@ -26,7 +26,7 @@ namespace BattleShip.Models
             {
                 for (int j = 0; j < Grid.GetLength(1); j++)
                 {
-                    Grid[i,j] = Tile.Normal;
+                    Grid[i, j] = new Tile();
                 }
             }
         }
@@ -36,9 +36,9 @@ namespace BattleShip.Models
         /// <param name="x">The x coordinate of the tile to change</param>
         /// <param name="y">The y coordinate of the tile to change</param>
         /// <param name="state">The Tile state to change to</param>
-        public void ChangeTile(int x, int y, Tile state)
+        public void ChangeTile(int x, int y, TileState state)
         {
-            Grid[x, y] = state;
+            Grid[x, y].State = state;
             FieldChanged();
         }
 
@@ -49,15 +49,18 @@ namespace BattleShip.Models
         /// <param name="x">The x coordinate to check</param>
         /// <param name="y">The y coordinate to check</param>
         /// <returns>A tile at the given point</returns>
-        public Tile ValueAt(int x, int y)
+        public TileState ValueAt(int x, int y)
         {
             if (x >= Grid.GetLength(0) || x < 0 || y < 0 || y >= Grid.GetLength(1))
             {
                 throw new ArgumentException("Cannot get a Tile value, argument out of range");
             }
-            return Grid[x, y];
+            return Grid[x, y].State;
         }
 
+        /// <summary>
+        /// Field changing event
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         protected void FieldChanged(string field = null)
         {

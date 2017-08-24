@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleShip.Models
+namespace BattleShip.Logical.AI
 {
-    [Serializable]
-    public class Tile
+    public interface IAIModel
     {
-        public TileState State { get; set; } = TileState.Normal;
+        Point ChoosePoint();
     }
 }

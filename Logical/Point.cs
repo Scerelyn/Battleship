@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleShip.Models
+namespace BattleShip.Logical
 {
-    [Serializable]
-    public class Tile
+    public class Point
     {
-        public TileState State { get; set; } = TileState.Normal;
+        public int X { get; set; } = 0;
+        public int Y { get; set; } = 0;
     }
 }

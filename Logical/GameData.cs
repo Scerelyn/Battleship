@@ -26,18 +26,6 @@ namespace BattleShip.Logical
         public Playgrid EnemyShips { get; set; } = new Playgrid(10, 10);
 
         /// <summary>
-        /// The player view of the enemy's ships
-        /// Enemy ShipHere tiles will be obfuscated unless hit
-        /// </summary>
-        public Playgrid PlayerViewEnemyShips { get; set; } = new Playgrid(10, 10);
-
-        /// <summary>
-        /// The enemy's view of the player's ships
-        /// Player ShipHere tiles will be obfuscated unless hit
-        /// </summary>
-        public Playgrid EnemyViewPlayerShips { get; set; } = new Playgrid(10, 10);
-
-        /// <summary>
         /// Places a ship on the respective grid at the respective x,y location.
         /// Ships are placed by setting their leftmost or top most point, then add on their length
         /// </summary>
@@ -47,20 +35,23 @@ namespace BattleShip.Logical
         /// <param name="y">The y coordinate to place on</param>
         public void PlaceShip(Ship s, Playgrid pg, int x, int y)
         {
+            s.Tiles = new Tile[s.Length];
             if (IsValidPlacement(s,pg,x,y))
             {
                 if (s.IsVertical)
                 {
                     for (int i = 0; i < pg.Height; i++)
                     {
-                        pg.ChangeTile(x,y+i,Tile.ShipHere);
+                        pg.ChangeTile(x,y+i,TileState.ShipHere);
+                        s.Tiles[i] = pg.Grid[x + i, y];
                     }
                 }
                 else
                 {
                     for (int i = 0; i < pg.Width; i++)
                     {
-                        pg.ChangeTile(x+i, y, Tile.ShipHere);
+                        pg.ChangeTile(x, y + i, TileState.ShipHere);
+                        s.Tiles[i] = pg.Grid[x, y + i];
                     }
                 }
             }
@@ -97,11 +88,11 @@ namespace BattleShip.Logical
         public bool Shoot(int x, int y, Playgrid target, params Playgrid[] affected)
         {
             bool hit = false;
-            if (target.ValueAt(x,y) == Tile.ShipHere)
+            if (target.ValueAt(x,y) == TileState.ShipHere)
             {
                 foreach(Playgrid pg in affected)
                 {
-                    pg.ChangeTile(x, y, Tile.Hit);
+                    pg.ChangeTile(x, y, TileState.Hit);
                 }
                 hit = true;
             }
@@ -109,7 +100,7 @@ namespace BattleShip.Logical
             {
                 foreach (Playgrid pg in affected)
                 {
-                    pg.ChangeTile(x, y, Tile.Missed);
+                    pg.ChangeTile(x, y, TileState.Missed);
                 }
             }
             return hit;
