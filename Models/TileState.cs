@@ -12,6 +12,6 @@ namespace BattleShip.Models
     /// </summary>
     public enum TileState
     {
-        Normal,Missed,Hit,ShipHere
+        Normal,Missed,Hit,ShipHere,PreviewOK,PreviewCollision
     }
 }

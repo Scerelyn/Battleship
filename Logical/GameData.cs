@@ -16,15 +16,38 @@ namespace BattleShip.Logical
     public class GameData
     {
         /// <summary>
-        /// The Player's ships, also acts as their own view of their ship, with enemy activity shown
+        /// The Player's ship grid, also acts as their own view of their ship, with enemy activity shown
         /// </summary>
-        public Playgrid PlayerShips { get; set; } = new Playgrid(10, 10);
+        public Playgrid PlayerShipsGrid { get; set; } = new Playgrid(10, 10);
 
         /// <summary>
-        /// The Enemies ships, acting as their own view of the player's activity
+        /// The Enemies ship grid, acting as their own view of the player's activity
         /// </summary>
-        public Playgrid EnemyShips { get; set; } = new Playgrid(10, 10);
+        public Playgrid EnemyShipsGrid { get; set; } = new Playgrid(10, 10);
 
+        /// <summary>
+        /// A list of ships belonging to the player
+        /// </summary>
+        public List<Ship> PlayerShips { get; private set; } = new List<Ship>()
+        {
+            new Ship(2, "Destroyer",false),
+            new Ship(3, "Cuiser", false),
+            new Ship(3, "Submarine", false),
+            new Ship(4, "Battleship", false),
+            new Ship(5, "Carrier", false),
+        };
+
+        /// <summary>
+        /// A list of ships belonging to the enemy
+        /// </summary>
+        public List<Ship> EnemyShips { get; private set; } = new List<Ship>()
+        {
+            new Ship(2, "Destroyer",false),
+            new Ship(3, "Cuiser", false),
+            new Ship(3, "Submarine", false),
+            new Ship(4, "Battleship", false),
+            new Ship(5, "Carrier", false),
+        };
         /// <summary>
         /// Places a ship on the respective grid at the respective x,y location.
         /// Ships are placed by setting their leftmost or top most point, then add on their length
@@ -58,16 +81,84 @@ namespace BattleShip.Logical
         }
 
         /// <summary>
+        /// Changes tile states to preview states when view visually
+        /// </summary>
+        /// <param name="s">The ship to place</param>
+        /// <param name="pg">The Playgrid instance to place</param>
+        /// <param name="x">The x coordinate to place on</param>
+        /// <param name="y">The y coordinate to place on</param>
+        public void PreviewShipPlace(Ship s, Playgrid pg, int x, int y)
+        {
+            s.Tiles = new Tile[s.Length];
+            if (IsValidPlacement(s, pg, x, y))
+            {
+                if (s.IsVertical)
+                {
+                    for (int i = 0; i < pg.Height; i++)
+                    {
+                        if (pg.ValueAt(x + i,y) != TileState.ShipHere)
+                        {
+                            pg.ChangeTile(x + i, y, TileState.PreviewOK);
+                        }
+                        else
+                        {
+                            pg.ChangeTile(x + i, y, TileState.PreviewCollision);
+                        }
+                        s.Tiles[i] = pg.Grid[x + i, y];
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < pg.Width; i++)
+                    {
+                        if (pg.ValueAt(x, y + i) != TileState.ShipHere)
+                        {
+                            pg.ChangeTile(x, y + i, TileState.PreviewOK);
+                        }
+                        else
+                        {
+                            pg.ChangeTile(x, y + i, TileState.PreviewCollision);
+                        }
+                        s.Tiles[i] = pg.Grid[x, y + i];
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Reverts the changed tiles states that previewing made
+        /// </summary>
+        /// <param name="pg">The affected Playgrid instance to revert on</param>
+        public void RevertPreviewChanges(Playgrid pg)
+        {
+            for (int i = 0; i < pg.Width; i++)
+            {
+                for (int j = 0; j < pg.Height; j++)
+                {
+                    if (pg.ValueAt(i, j) == TileState.PreviewOK)
+                    {
+                        pg.ChangeTile(i, j, TileState.Normal);
+                    }
+                    else if (pg.ValueAt(i, j) == TileState.PreviewCollision)
+                    {
+                        pg.ChangeTile(i, j, TileState.ShipHere);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Checks to see if a given Ship instance can be places on a given Playgrid
         /// </summary>
         /// <param name="s">The ship instance to place</param>
         /// <param name="pg">Playgrid instance</param>
         /// <param name="x">The x coordinate to place the ship on</param>
         /// <param name="y">The y coordinate to place the ship on</param>
-        /// <returns></returns>
+        /// <returns>A boolean if the placement spot is valid or not</returns>
         public bool IsValidPlacement(Ship s, Playgrid pg, int x, int y)
         {
-            if (x > pg.Width-s.Length || y > pg.Height-s.Length || x < 0 || y < 0)
+            if (x > pg.Width-s.Length || y > pg.Height-s.Length || x < 0 || y < 0 //out of bounds check
+                || pg.ValueAt(x,y) != TileState.ShipHere || pg.ValueAt(x,y) != TileState.PreviewCollision) //valid tile/collision check
             {
                 return false;
             }
@@ -106,6 +197,10 @@ namespace BattleShip.Logical
             return hit;
         }
 
+        /// <summary>
+        /// Saves the Gamedata instance to a file on disk
+        /// </summary>
+        /// <param name="filepath">The complete filepath to save to, ie: c:/data/save.btl</param>
         public void SaveData(string filepath)
         {
             Stream stream = File.Open(filepath, FileMode.Create);
@@ -114,6 +209,11 @@ namespace BattleShip.Logical
             stream.Close();
         }
 
+        /// <summary>
+        /// Loads a Gamedata instance from a file on disk
+        /// </summary>
+        /// <param name="filepath">The complete file path to load from, ie: c:/data/save.btl</param>
+        /// <returns>A Gamedata instance with the data from the file given</returns>
         public static GameData LoadData(string filepath)
         {
             Stream stream = File.Open(filepath, FileMode.Open);

@@ -13,10 +13,12 @@ namespace BattleShip.Converters
     public class TileToBrush : IValueConverter
     {
         Brush Normal { get; set; } = Brushes.Blue;
-        Brush Hit { get; set; } = Brushes.Red;
+        Brush Hit { get; set; } = Brushes.HotPink;
         Brush Missed { get; set; } = Brushes.White;
-        Brush ShipHere { get; set; } = Brushes.DarkGray;
+        Brush ShipHere { get; set; } = Brushes.LightGray;
         Brush Invalid { get; set; } = Brushes.Black;
+        Brush PreviewCollision { get; set; } = Brushes.Red;
+        Brush PreviewOK { get; set; } = Brushes.DimGray;
         public bool IsObfuscated { get; set; } = false;
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -36,6 +38,12 @@ namespace BattleShip.Converters
                     break;
                 case TileState.ShipHere:
                     b = IsObfuscated ? Normal : ShipHere;
+                    break;
+                case TileState.PreviewCollision:
+                    b = PreviewCollision;
+                    break;
+                case TileState.PreviewOK:
+                    b = PreviewOK;
                     break;
                 default:
                     b = Invalid;

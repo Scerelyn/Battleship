@@ -42,17 +42,17 @@ namespace BattleShip
 
         public void FillGrids()
         {
-            for (int i = 0;  i < usedData.EnemyShips.Width; i++)
+            for (int i = 0;  i < usedData.EnemyShipsGrid.Width; i++)
             {
                 StackPanel sp = new StackPanel();
                 sp.Orientation = Orientation.Horizontal;
-                for (int j = 0; j < usedData.EnemyShips.Height; j++)
+                for (int j = 0; j < usedData.EnemyShipsGrid.Height; j++)
                 {
                     Rectangle r = new Rectangle()
                     {
-                        Height = HitAreaStackPanel.MinHeight / usedData.EnemyShips.Height,
-                        Width = HitAreaStackPanel.MinWidth / usedData.EnemyShips.Width,
-                        DataContext = usedData.EnemyShips.Grid[i, j],
+                        Height = HitAreaStackPanel.MinHeight / usedData.EnemyShipsGrid.Height,
+                        Width = HitAreaStackPanel.MinWidth / usedData.EnemyShipsGrid.Width,
+                        DataContext = usedData.EnemyShipsGrid.Grid[i, j],
                         RadiusX = 5,
                         RadiusY = 5,
                     };
@@ -64,17 +64,17 @@ namespace BattleShip
                 HitAreaStackPanel.Children.Add(sp);
             }
 
-            for (int i = 0; i < usedData.PlayerShips.Width; i++)
+            for (int i = 0; i < usedData.PlayerShipsGrid.Width; i++)
             {
                 StackPanel sp = new StackPanel();
                 sp.Orientation = Orientation.Horizontal;
-                for (int j = 0; j < usedData.PlayerShips.Height; j++)
+                for (int j = 0; j < usedData.PlayerShipsGrid.Height; j++)
                 {
                     Rectangle r = new Rectangle()
                     {
-                        Height = HitAreaStackPanel.MinHeight / usedData.PlayerShips.Height,
-                        Width = HitAreaStackPanel.MinWidth / usedData.PlayerShips.Width,
-                        DataContext = usedData.PlayerShips.Grid[i, j],
+                        Height = HitAreaStackPanel.MinHeight / usedData.PlayerShipsGrid.Height,
+                        Width = HitAreaStackPanel.MinWidth / usedData.PlayerShipsGrid.Width,
+                        DataContext = usedData.PlayerShipsGrid.Grid[i, j],
                         RadiusX = 5,
                         RadiusY = 5,
                     };
@@ -89,17 +89,10 @@ namespace BattleShip
 
         public void PlayerPlacesShips()
         {
-            List<Ship> ships = new List<Ship>()
-            {
-                new Ship(2,"Destroyer",false),
-                new Ship(3, "Cuiser", false),
-                new Ship(3, "Submarine", false),
-                new Ship(4, "Battleship", false),
-                new Ship(5, "Carrier", false),
-            };
+            
             isPlacingShips = true;
 
-            foreach (Ship s in ships)
+            foreach (Ship s in usedData.PlayerShips)
             {
 
             }
