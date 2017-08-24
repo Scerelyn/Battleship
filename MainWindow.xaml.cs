@@ -1,5 +1,6 @@
 ﻿using BattleShip.Converters;
 using BattleShip.Logical;
+using BattleShip.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +28,7 @@ namespace BattleShip
         GameData usedData = new GameData();
         TileToBrush t2bUnobf = new TileToBrush();
         TileToBrush t2bObf = new TileToBrush() { IsObfuscated = true };
+        bool isPlacingShips = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -83,6 +85,31 @@ namespace BattleShip
                 }
                 PlayerShipAreaStackPanel.Children.Add(sp);
             }
+        }
+
+        public void PlayerPlacesShips()
+        {
+            List<Ship> ships = new List<Ship>()
+            {
+                new Ship(2,"Destroyer",false),
+                new Ship(3, "Cuiser", false),
+                new Ship(3, "Submarine", false),
+                new Ship(4, "Battleship", false),
+                new Ship(5, "Carrier", false),
+            };
+            isPlacingShips = true;
+
+            foreach (Ship s in ships)
+            {
+
+            }
+
+            isPlacingShips = false;
+        }
+
+        public void RevealEnemy()
+        {
+            t2bObf.IsObfuscated = false;
         }
     }
 }

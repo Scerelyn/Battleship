@@ -16,6 +16,13 @@ namespace BattleShip.Models
         public bool IsVertical { get; set; }
         public Tile[] Tiles { get; set; }
 
+        public Ship(int length, string name, bool isVertical)
+        {
+            Length = length;
+            Name = name;
+            IsVertical = isVertical;
+        }
+
         /// <summary>
         /// Determines if this ship is sunk, ie: all associated tiles are hit
         /// </summary>
