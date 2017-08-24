@@ -61,8 +61,28 @@ namespace BattleShip
                 }
                 HitAreaStackPanel.Children.Add(sp);
             }
-        }
 
-        
+            for (int i = 0; i < usedData.PlayerShips.Width; i++)
+            {
+                StackPanel sp = new StackPanel();
+                sp.Orientation = Orientation.Horizontal;
+                for (int j = 0; j < usedData.PlayerShips.Height; j++)
+                {
+                    Rectangle r = new Rectangle()
+                    {
+                        Height = HitAreaStackPanel.MinHeight / usedData.PlayerShips.Height,
+                        Width = HitAreaStackPanel.MinWidth / usedData.PlayerShips.Width,
+                        DataContext = usedData.PlayerShips.Grid[i, j],
+                        RadiusX = 5,
+                        RadiusY = 5,
+                    };
+                    Binding b = new Binding("State");
+                    b.Converter = t2bUnobf;
+                    r.SetBinding(Rectangle.FillProperty, b);
+                    sp.Children.Add(r);
+                }
+                PlayerShipAreaStackPanel.Children.Add(sp);
+            }
+        }
     }
 }
