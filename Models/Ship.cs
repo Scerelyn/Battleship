@@ -15,7 +15,7 @@ namespace BattleShip.Models
         public int Length { get; private set; }
         public string Name { get; private set; }
         public bool IsVertical { get; set; }
-        public Tile[] Tiles { get; set; }
+        public Tile[] Tiles { get; set; } = null;
 
         public Ship(int length, string name, bool isVertical)
         {

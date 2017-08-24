@@ -29,6 +29,8 @@ namespace BattleShip
         TileToBrush t2bUnobf = new TileToBrush();
         TileToBrush t2bObf = new TileToBrush() { IsObfuscated = true };
         bool isPlacingShips = false;
+        int mouseX = 0, mouseY = 0;
+        Ship activePlaceShip = null;
         public MainWindow()
         {
             InitializeComponent();
@@ -38,6 +40,9 @@ namespace BattleShip
             GameData dat = new GameData();
             usedData = dat;
             FillGrids();
+            //activePlaceShip = usedData.PlayerShips[1];
+            //isPlacingShips = true;
+            PlayerPlacesShips();
         }
 
         public void FillGrids()
@@ -45,7 +50,6 @@ namespace BattleShip
             for (int i = 0;  i < usedData.EnemyShipsGrid.Width; i++)
             {
                 StackPanel sp = new StackPanel();
-                sp.Orientation = Orientation.Horizontal;
                 for (int j = 0; j < usedData.EnemyShipsGrid.Height; j++)
                 {
                     Rectangle r = new Rectangle()
@@ -66,10 +70,11 @@ namespace BattleShip
 
             for (int i = 0; i < usedData.PlayerShipsGrid.Width; i++)
             {
+                int x = i;
                 StackPanel sp = new StackPanel();
-                sp.Orientation = Orientation.Horizontal;
                 for (int j = 0; j < usedData.PlayerShipsGrid.Height; j++)
                 {
+                    int y = j;
                     Rectangle r = new Rectangle()
                     {
                         Height = HitAreaStackPanel.MinHeight / usedData.PlayerShipsGrid.Height,
@@ -81,23 +86,55 @@ namespace BattleShip
                     Binding b = new Binding("State");
                     b.Converter = t2bUnobf;
                     r.SetBinding(Rectangle.FillProperty, b);
+                    r.MouseEnter += (sender, args) =>
+                    {
+                        mouseX = x;
+                        mouseY = y;
+                        if (isPlacingShips)
+                        {
+                            usedData.RevertPreviewChanges(usedData.PlayerShipsGrid);
+                            usedData.PreviewShipPlace(activePlaceShip,usedData.PlayerShipsGrid,mouseX,mouseY);
+                        }
+                        //MessageBox.Show($"{mouseX},{mouseY}");
+                    };
+                    r.MouseDown += DoPlaceShip;
                     sp.Children.Add(r);
                 }
                 PlayerShipAreaStackPanel.Children.Add(sp);
             }
         }
 
-        public void PlayerPlacesShips()
+        public async void PlayerPlacesShips()
         {
             
             isPlacingShips = true;
 
             foreach (Ship s in usedData.PlayerShips)
             {
-
+                activePlaceShip = s;
+                await WhenClicked(PlayerShipAreaStackPanel);
             }
 
             isPlacingShips = false;
+        }
+
+        public static Task WhenClicked(StackPanel target)
+        {
+            var tcs = new TaskCompletionSource<object>();
+            MouseButtonEventHandler onClick = null;
+            onClick = (sender, e) =>
+            {
+                target.MouseDown -= onClick;
+                tcs.TrySetResult(null);
+            };
+            target.MouseDown += onClick;
+            return tcs.Task;
+        }
+
+        public void DoPlaceShip(object sender, RoutedEventArgs args)
+        {
+            MessageBox.Show($"placed {mouseX} {mouseY}");
+            usedData.PlaceShip(activePlaceShip, usedData.PlayerShipsGrid, mouseX, mouseY);
         }
 
         public void RevealEnemy()

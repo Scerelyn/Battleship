@@ -59,7 +59,7 @@ namespace BattleShip.Logical
         public void PlaceShip(Ship s, Playgrid pg, int x, int y)
         {
             s.Tiles = new Tile[s.Length];
-            if (IsValidPlacement(s,pg,x,y))
+            if (IsValidPlacement(s,pg,x,y) && !IsShipHere(pg,x,y))
             {
                 if (s.IsVertical)
                 {
@@ -89,37 +89,74 @@ namespace BattleShip.Logical
         /// <param name="y">The y coordinate to place on</param>
         public void PreviewShipPlace(Ship s, Playgrid pg, int x, int y)
         {
+            if(s == null)
+            {
+                return;
+            }
             s.Tiles = new Tile[s.Length];
-            if (IsValidPlacement(s, pg, x, y))
+            bool inBounds = (x >= 0 && y >= 0) && (x < pg.Width && y < pg.Height); //isValid limits the bounds further because of ship length, need a bool for 'normal' out of bounds
+            if (inBounds)
             {
                 if (s.IsVertical)
                 {
-                    for (int i = 0; i < pg.Height; i++)
+                    if (IsValidPlacement(s, pg, x, y))
                     {
-                        if (pg.ValueAt(x + i,y) != TileState.ShipHere)
+                        for (int i = 0; i < s.Length; i++)
                         {
-                            pg.ChangeTile(x + i, y, TileState.PreviewOK);
+                            if(pg.ValueAt(x,y+i) == TileState.ShipHere)
+                            {
+                                pg.ChangeTile(x, y + i, TileState.PreviewCollision);
+                            }
+                            else
+                            {
+                                pg.ChangeTile(x, y + i, TileState.PreviewOK);
+                            }
                         }
-                        else
+                    }
+                    else
+                    {
+                        for (int i = 0; i < s.Length; i++)
                         {
-                            pg.ChangeTile(x + i, y, TileState.PreviewCollision);
+                            if (pg.ValueAt(x, pg.Height - s.Length + i) == TileState.ShipHere)
+                            {
+                                pg.ChangeTile(x, pg.Height - s.Length + i, TileState.PreviewCollision);
+                            }
+                            else
+                            {
+                                pg.ChangeTile(x, pg.Height - s.Length + i, TileState.PreviewOK);
+                            }
                         }
-                        s.Tiles[i] = pg.Grid[x + i, y];
                     }
                 }
                 else
                 {
-                    for (int i = 0; i < pg.Width; i++)
+                    if (IsValidPlacement(s, pg, x, y))
                     {
-                        if (pg.ValueAt(x, y + i) != TileState.ShipHere)
+                        for (int i = 0; i < s.Length; i++)
                         {
-                            pg.ChangeTile(x, y + i, TileState.PreviewOK);
+                            if (pg.ValueAt(x + i, y) == TileState.ShipHere)
+                            {
+                                pg.ChangeTile(x + i, y, TileState.PreviewCollision);
+                            }
+                            else
+                            {
+                                pg.ChangeTile(x + i, y, TileState.PreviewOK);
+                            }
                         }
-                        else
+                    }
+                    else
+                    {
+                        for (int i = 0; i < s.Length; i++)
                         {
-                            pg.ChangeTile(x, y + i, TileState.PreviewCollision);
+                            if (pg.ValueAt(pg.Width - s.Length + i, y) == TileState.ShipHere)
+                            {
+                                pg.ChangeTile(pg.Width - s.Length + i,y , TileState.PreviewCollision);
+                            }
+                            else
+                            {
+                                pg.ChangeTile(pg.Width - s.Length + i, y, TileState.PreviewOK);
+                            }
                         }
-                        s.Tiles[i] = pg.Grid[x, y + i];
                     }
                 }
             }
@@ -148,7 +185,7 @@ namespace BattleShip.Logical
         }
 
         /// <summary>
-        /// Checks to see if a given Ship instance can be places on a given Playgrid
+        /// Checks to see if a given Ship instance can be placed on a given Playgrid without being out of bounds
         /// </summary>
         /// <param name="s">The ship instance to place</param>
         /// <param name="pg">Playgrid instance</param>
@@ -157,14 +194,32 @@ namespace BattleShip.Logical
         /// <returns>A boolean if the placement spot is valid or not</returns>
         public bool IsValidPlacement(Ship s, Playgrid pg, int x, int y)
         {
-            if (x > pg.Width-s.Length || y > pg.Height-s.Length || x < 0 || y < 0 //out of bounds check
-                || pg.ValueAt(x,y) != TileState.ShipHere || pg.ValueAt(x,y) != TileState.PreviewCollision) //valid tile/collision check
+            if ( (x > pg.Width-s.Length && !s.IsVertical) || (y > pg.Height-s.Length && s.IsVertical) || x < 0 || y < 0) //out of bounds check
             {
                 return false;
             }
             else
             {
                 return true;
+            }
+        }
+
+        /// <summary>
+        /// Checks to see if a ship is present at the given tile
+        /// </summary>
+        /// <param name="pg">The Playgrid instance to check on</param>
+        /// <param name="x">The x coordinate to check</param>
+        /// <param name="y">The y coordinate to check</param>
+        /// <returns></returns>
+        public bool IsShipHere(Playgrid pg, int x, int y)
+        {
+            if (pg.ValueAt(x, y) != TileState.ShipHere || pg.ValueAt(x, y) != TileState.PreviewCollision)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

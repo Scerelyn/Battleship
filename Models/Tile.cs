@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,8 +8,25 @@ using System.Threading.Tasks;
 namespace BattleShip.Models
 {
     [Serializable]
-    public class Tile
+    public class Tile : INotifyPropertyChanged
     {
-        public TileState State { get; set; } = TileState.Normal;
+        private TileState state = TileState.Normal;
+        public TileState State
+        {
+            get { return state; }
+            set { state = value; FieldChanged(); }
+        }
+
+        /// <summary>
+        /// Field changing event
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void FieldChanged(string field = null)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(field));
+            }
+        }
     }
 }
