@@ -17,6 +17,7 @@ namespace BattleShip.Models
             set { state = value; FieldChanged(); }
         }
 
+        [field: NonSerialized]
         /// <summary>
         /// Field changing event
         /// </summary>

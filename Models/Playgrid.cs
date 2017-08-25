@@ -58,6 +58,7 @@ namespace BattleShip.Models
             return Grid[x, y].State;
         }
 
+        [field: NonSerialized]
         /// <summary>
         /// Field changing event
         /// </summary>

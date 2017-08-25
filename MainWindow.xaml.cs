@@ -34,19 +34,17 @@ namespace BattleShip
         public MainWindow()
         {
             InitializeComponent();
-            //GameData d = GameData.LoadData(Directory.GetCurrentDirectory() + "/file.dat");//new GameData();
-            //d.SaveData(Directory.GetCurrentDirectory() + "/file.dat");
-            //MessageBox.Show(d.PlayerShips.ValueAt(1,1)+"");
-            GameData dat = new GameData();
-            usedData = dat;
-            FillGrids();
-            //activePlaceShip = usedData.PlayerShips[1];
-            //isPlacingShips = true;
             try
             {
+                GameData dat = GameData.LoadData(Directory.GetCurrentDirectory() + "/file.dat");
+                //GameData dat = new GameData();
+                usedData = dat;
+                FillGrids();
+                //activePlaceShip = usedData.PlayerShips[1];
+                //isPlacingShips = true;
                 PlayerPlacesShips();
-                //RevealEnemy();
-                EnemyPlacesShips();
+                //EnemyPlacesShips();
+                //dat.SaveData(Directory.GetCurrentDirectory() + "/file.dat");
             } catch(Exception e)
             {
                 MessageBox.Show(e.Message + e.StackTrace);
