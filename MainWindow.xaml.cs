@@ -42,32 +42,33 @@ namespace BattleShip
             FillGrids();
             //activePlaceShip = usedData.PlayerShips[1];
             //isPlacingShips = true;
-            PlayerPlacesShips();
+            try
+            {
+                PlayerPlacesShips();
+                //RevealEnemy();
+                EnemyPlacesShips();
+            } catch(Exception e)
+            {
+                MessageBox.Show(e.Message + e.StackTrace);
+            }
         }
 
+        /// <summary>
+        /// Draws the grids with rectangles binded to appropriate cells for both the Player and Enemy
+        /// </summary>
         public void FillGrids()
         {
-            for (int i = 0;  i < usedData.EnemyShipsGrid.Width; i++)
-            {
-                StackPanel sp = new StackPanel();
-                for (int j = 0; j < usedData.EnemyShipsGrid.Height; j++)
-                {
-                    Rectangle r = new Rectangle()
-                    {
-                        Height = HitAreaStackPanel.MinHeight / usedData.EnemyShipsGrid.Height,
-                        Width = HitAreaStackPanel.MinWidth / usedData.EnemyShipsGrid.Width,
-                        DataContext = usedData.EnemyShipsGrid.Grid[i, j],
-                        RadiusX = 5,
-                        RadiusY = 5,
-                    };
-                    Binding b = new Binding("State");
-                    b.Converter = t2bObf;
-                    r.SetBinding(Rectangle.FillProperty,b);
-                    sp.Children.Add(r);
-                }
-                HitAreaStackPanel.Children.Add(sp);
-            }
+            FillPlayerGrid();
+            FillEnemyGrid();
+        }
 
+        /// <summary>
+        /// Fills the PlayerShipAreaStackPanel with rectangles representing Tiles in the Player's Playgrid
+        /// This method will clear and rebuild the PlayerShipStackPanel if called multiple times
+        /// </summary>
+        public void FillPlayerGrid()
+        {
+            PlayerShipAreaStackPanel.Children.Clear();
             for (int i = 0; i < usedData.PlayerShipsGrid.Width; i++)
             {
                 int x = i;
@@ -93,7 +94,7 @@ namespace BattleShip
                         if (isPlacingShips)
                         {
                             usedData.RevertPreviewChanges(usedData.PlayerShipsGrid);
-                            usedData.PreviewShipPlace(activePlaceShip,usedData.PlayerShipsGrid,mouseX,mouseY);
+                            usedData.PreviewShipPlace(activePlaceShip, usedData.PlayerShipsGrid, mouseX, mouseY);
                         }
                         //MessageBox.Show($"{mouseX},{mouseY}");
                     };
@@ -110,6 +111,38 @@ namespace BattleShip
             }
         }
 
+        /// <summary>
+        /// Fills the HitAreaStackPanel with rectangles representing Tiles in the Enemy's Playgrid
+        /// This method will clear and rebuild the HitStackPanel if called multiple times
+        /// </summary>
+        public void FillEnemyGrid()
+        {
+            HitAreaStackPanel.Children.Clear();
+            for (int i = 0; i < usedData.EnemyShipsGrid.Width; i++)
+            {
+                StackPanel sp = new StackPanel();
+                for (int j = 0; j < usedData.EnemyShipsGrid.Height; j++)
+                {
+                    Rectangle r = new Rectangle()
+                    {
+                        Height = HitAreaStackPanel.MinHeight / usedData.EnemyShipsGrid.Height,
+                        Width = HitAreaStackPanel.MinWidth / usedData.EnemyShipsGrid.Width,
+                        DataContext = usedData.EnemyShipsGrid.Grid[i, j],
+                        RadiusX = 5,
+                        RadiusY = 5,
+                    };
+                    Binding b = new Binding("State");
+                    b.Converter = t2bObf;
+                    r.SetBinding(Rectangle.FillProperty, b);
+                    sp.Children.Add(r);
+                }
+                HitAreaStackPanel.Children.Add(sp);
+            }
+        }
+
+        /// <summary>
+        /// Has the player place their ships, awaiting until all are placed
+        /// </summary>
         public async void PlayerPlacesShips()
         {
             isPlacingShips = true;
@@ -126,7 +159,12 @@ namespace BattleShip
             activePlaceShip = null;
         }
 
-        public static Task WhenClicked(StackPanel target)
+        /// <summary>
+        /// A helper method acts as a pause until click delay
+        /// </summary>
+        /// <param name="target">A UIElement to await a leftbuttondown event on</param>
+        /// <returns></returns>
+        private static Task WhenClicked(UIElement target)
         {
             var tcs = new TaskCompletionSource<object>();
             MouseButtonEventHandler onClick = null;
@@ -139,6 +177,11 @@ namespace BattleShip
             return tcs.Task;
         }
 
+        /// <summary>
+        /// The on left click action to place ships
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         public void DoPlaceShip(object sender, RoutedEventArgs args)
         {
             if (activePlaceShip != null && isPlacingShips)
@@ -154,9 +197,44 @@ namespace BattleShip
             }
         }
 
-        public void RevealEnemy()
+        /// <summary>
+        /// Click based action that reveals the enemy grid
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void DoReveal(object sender, RoutedEventArgs args)
         {
-            t2bObf.IsObfuscated = false;
+            MenuItem revealMenuItem = (MenuItem)sender;
+            if (t2bObf.IsObfuscated == true)
+            {
+                revealMenuItem.Header = "Hide Enemy Ships";
+            }
+            else
+            {
+                revealMenuItem.Header = "Reveal Enemy Ships";
+            }
+            t2bObf.IsObfuscated = !t2bObf.IsObfuscated;
+            FillEnemyGrid(); //to 'refresh' the grid, since i can't really bind to a property/notify its change in the converter
+        }
+
+        /// <summary>
+        /// Places Enemy ships onto the grid randomly
+        /// </summary>
+        public void EnemyPlacesShips()
+        {
+            Random rng = new Random();
+            foreach (Ship s in usedData.EnemyShips)
+            {
+                int x = rng.Next(0, 10);
+                int y = rng.Next(0, 10);
+                s.IsVertical = rng.Next(0, 2) == 1 ? true : false;
+                while (!usedData.IsValidPlacement(s,usedData.EnemyShipsGrid,x,y) || usedData.IsShipIntersecting(s,usedData.EnemyShipsGrid,x,y))
+                {
+                    x = rng.Next(0, 10);
+                    y = rng.Next(0, 10);
+                }
+                usedData.PlaceShip(s,usedData.EnemyShipsGrid,x,y);
+            }
         }
     }
 }

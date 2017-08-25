@@ -243,6 +243,30 @@ namespace BattleShip.Logical
         }
 
         /// <summary>
+        /// Checks to see if a given ship is intersecting
+        /// </summary>
+        /// <param name="s">The ship to check if its intersecting anything</param>
+        /// <param name="pg">The playgrid to check</param>
+        /// <param name="x">The x coordinate of the ships top/left most point</param>
+        /// <param name="y">The y coordinate of the ships top/left most point</param>
+        /// <returns>True if the ship is intersecting another and false if it is not</returns>
+        public bool IsShipIntersecting(Ship s, Playgrid pg, int x, int y)
+        {
+            for (int i = 0; i < s.Length; i++)
+            {
+                if(s.IsVertical && IsShipHere(pg, x, y + i))
+                {
+                    return true;
+                }
+                else if (!s.IsVertical && IsShipHere(pg, x + i, y))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Fires at a given x,y coordinate
         /// </summary>
         /// <param name="x">The x coordinate of where to 'shoot'</param>

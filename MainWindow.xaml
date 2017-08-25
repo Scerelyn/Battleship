@@ -8,9 +8,21 @@
         Title="Battleship" SizeToContent="WidthAndHeight">
     <StackPanel x:Name="BaseStackPanel">
         <Menu>
-            <MenuItem Header="File"/>
-            <MenuItem Header="Game Settings"/>
-            <MenuItem Header="Debug"/>
+            <MenuItem Header="File">
+                <MenuItem Header="Open Save file"/>
+                <MenuItem Header="Save game"/>
+            </MenuItem>
+            <MenuItem Header="Game Settings">
+                <MenuItem Header="AI Difficulty">
+                    <MenuItem Header="Easy"/>
+                    <MenuItem Header="Medium"/>
+                    <MenuItem Header="Hard"/>
+                    <MenuItem Header="Basically cheating"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Debug">
+                <MenuItem Header="Reveal Enemy Ships" Click="DoReveal"/>
+            </MenuItem>
         </Menu>
         <StackPanel x:Name="MainStackPanel" Orientation="Horizontal" Background="LightSteelBlue">
             <Label Content="Enemy Field"/>
