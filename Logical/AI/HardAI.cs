@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace BattleShip.Logical.AI
 {
-    public class EasyAI : IAIModel
+    public class HardAI : IAIModel
     {
         private Random rng = new Random();
-        private string difficulty = "Easy";
+        private string difficulty = "Hard";
         public string DifficultyTitle { get { return difficulty; } }
-
+        private List<Point> toShoot = new List<Point>();
         public Point ChoosePoint()
         {
-            return new Point(rng.Next(0,Point.MaxGridX+1), rng.Next(0,Point.MaxGridY+1));
+            throw new NotImplementedException();
         }
     }
 }

@@ -8,8 +8,8 @@ namespace BattleShip.Logical
 {
     public class Point
     {
-        public readonly int MaxGridX = 9;
-        public readonly int MaxGridY = 9;
+        public static readonly int MaxGridX = 9;
+        public static readonly int MaxGridY = 9;
         int x;
         int y;
         public int X

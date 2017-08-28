@@ -8,6 +8,7 @@ namespace BattleShip.Logical.AI
 {
     public interface IAIModel
     {
+        string DifficultyTitle { get; }
         Point ChoosePoint();
     }
 }
