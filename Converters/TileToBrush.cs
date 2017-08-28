@@ -13,7 +13,7 @@ namespace BattleShip.Converters
     public class TileToBrush : IValueConverter
     {
         Brush Normal { get; set; } = Brushes.DodgerBlue;
-        Brush Hit { get; set; } = Brushes.HotPink;
+        Brush Hit { get; set; } = Brushes.OrangeRed;
         Brush Missed { get; set; } = Brushes.White;
         Brush ShipHere { get; set; } = Brushes.LightGray;
         Brush Invalid { get; set; } = Brushes.Black;

@@ -28,8 +28,8 @@ namespace BattleShip
         GameData usedData = new GameData();
         TileToBrush t2bUnobf = new TileToBrush();
         TileToBrush t2bObf = new TileToBrush() { IsObfuscated = true };
-        bool isPlacingShips = false;
-        int mouseX = 0, mouseY = 0;
+        bool isPlacingShips = false, isGameRunning = false;
+        int playerAreaMouseX = 0, playerAreaMouseY = 0;
         Ship activePlaceShip = null;
         public MainWindow()
         {
@@ -45,6 +45,7 @@ namespace BattleShip
                 PlayerPlacesShips();
                 //EnemyPlacesShips();
                 //dat.SaveData(Directory.GetCurrentDirectory() + "/file.dat");
+                isGameRunning = true;
             } catch(Exception e)
             {
                 MessageBox.Show(e.Message + e.StackTrace);
@@ -87,21 +88,24 @@ namespace BattleShip
                     r.SetBinding(Rectangle.FillProperty, b);
                     r.MouseEnter += (sender, args) =>
                     {
-                        mouseX = x;
-                        mouseY = y;
+                        playerAreaMouseX = x;
+                        playerAreaMouseY = y;
                         if (isPlacingShips)
                         {
                             usedData.RevertPreviewChanges(usedData.PlayerShipsGrid);
-                            usedData.PreviewShipPlace(activePlaceShip, usedData.PlayerShipsGrid, mouseX, mouseY);
+                            usedData.PreviewShipPlace(activePlaceShip, usedData.PlayerShipsGrid, playerAreaMouseX, playerAreaMouseY);
                         }
                         //MessageBox.Show($"{mouseX},{mouseY}");
                     };
                     r.MouseLeftButtonDown += DoPlaceShip;
                     r.MouseRightButtonDown += (sender, args) =>
                     {
-                        activePlaceShip.IsVertical = !activePlaceShip.IsVertical;
-                        usedData.RevertPreviewChanges(usedData.PlayerShipsGrid);
-                        usedData.PreviewShipPlace(activePlaceShip, usedData.PlayerShipsGrid, mouseX, mouseY);
+                        if (isPlacingShips)
+                        {
+                            activePlaceShip.IsVertical = !activePlaceShip.IsVertical;
+                            usedData.RevertPreviewChanges(usedData.PlayerShipsGrid);
+                            usedData.PreviewShipPlace(activePlaceShip, usedData.PlayerShipsGrid, playerAreaMouseX, playerAreaMouseY);
+                        }
                     };
                     sp.Children.Add(r);
                 }
@@ -118,9 +122,11 @@ namespace BattleShip
             HitAreaStackPanel.Children.Clear();
             for (int i = 0; i < usedData.EnemyShipsGrid.Width; i++)
             {
+                int x = i;
                 StackPanel sp = new StackPanel();
                 for (int j = 0; j < usedData.EnemyShipsGrid.Height; j++)
                 {
+                    int y = j;
                     Rectangle r = new Rectangle()
                     {
                         Height = HitAreaStackPanel.MinHeight / usedData.EnemyShipsGrid.Height,
@@ -132,6 +138,21 @@ namespace BattleShip
                     Binding b = new Binding("State");
                     b.Converter = t2bObf;
                     r.SetBinding(Rectangle.FillProperty, b);
+                    r.MouseLeftButtonDown += (sender, args) =>
+                    {
+                        if (isGameRunning)
+                        {
+                            TileState aimed = ((Tile)r.DataContext).State;
+                            if (aimed != TileState.Hit && aimed != TileState.Missed)
+                            {
+                                usedData.Shoot(x,y,usedData.EnemyShipsGrid);
+                            }
+                            else
+                            {
+                                MessageBox.Show("You already fired here");
+                            }
+                        }
+                    };
                     sp.Children.Add(r);
                 }
                 HitAreaStackPanel.Children.Add(sp);
@@ -149,7 +170,7 @@ namespace BattleShip
             {
                 activePlaceShip = s;
                 while (activePlaceShip.Tiles == null) {
-                    await WhenClicked(PlayerShipAreaStackPanel); //will repeated wait for each left mouse down until the ship is actually placed
+                    await WhenClicked(PlayerShipAreaStackPanel); //will repeatedly wait for each left mouse down until the ship is actually placed
                 }
             }
 
@@ -185,12 +206,12 @@ namespace BattleShip
             if (activePlaceShip != null && isPlacingShips)
             {
                 usedData.PlaceShip(activePlaceShip, usedData.PlayerShipsGrid
-                    , mouseX > usedData.PlayerShipsGrid.Width - activePlaceShip.Length && !activePlaceShip.IsVertical //when the mouse is in the rightmost/bottommost spot, PlaceShip wont run from the IsValidPlacement check, so the altered 'edge' point will need to be sent in
+                    , playerAreaMouseX > usedData.PlayerShipsGrid.Width - activePlaceShip.Length && !activePlaceShip.IsVertical //when the mouse is in the rightmost/bottommost spot, PlaceShip wont run from the IsValidPlacement check, so the altered 'edge' point will need to be sent in
                         ? usedData.PlayerShipsGrid.Width - activePlaceShip.Length
-                        : mouseX
-                    , mouseY > usedData.PlayerShipsGrid.Height - activePlaceShip.Length && activePlaceShip.IsVertical
+                        : playerAreaMouseX
+                    , playerAreaMouseY > usedData.PlayerShipsGrid.Height - activePlaceShip.Length && activePlaceShip.IsVertical
                         ? usedData.PlayerShipsGrid.Height - activePlaceShip.Length
-                        : mouseY
+                        : playerAreaMouseY
                 );
             }
         }

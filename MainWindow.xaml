@@ -4,35 +4,59 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BattleShip"
+        xmlns:uc="clr-namespace:BattleShip.UserControlss"
         mc:Ignorable="d"
         Title="Battleship" SizeToContent="WidthAndHeight">
-    <StackPanel x:Name="BaseStackPanel">
-        <Menu>
+    <StackPanel x:Name="BaseStackPanel" Height="500">
+        <Menu> <!-- Top menu -->
             <MenuItem Header="File">
+                <MenuItem Header="New Game"/>
                 <MenuItem Header="Open Save file"/>
                 <MenuItem Header="Save game"/>
             </MenuItem>
             <MenuItem Header="Game Settings">
                 <MenuItem Header="AI Difficulty">
-                    <MenuItem Header="Easy"/>
-                    <MenuItem Header="Medium"/>
-                    <MenuItem Header="Hard"/>
-                    <MenuItem Header="Basically cheating"/>
+                    <MenuItem x:Name="EasyDifMenuItem" Header="Easy"/>
+                    <MenuItem x:Name="MediumDifMenuItem" Header="Medium"/>
+                    <MenuItem x:Name="HardDifMenuItem" Header="Hard"/>
+                    <MenuItem x:Name="CheatingDifMenuItem" Header="Basically cheating"/>
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Debug">
                 <MenuItem Header="Reveal Enemy Ships" Click="DoReveal"/>
             </MenuItem>
         </Menu>
+        
+        <Grid Background="LightSteelBlue"> <!-- Top label bar -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Enemy Field"/>
+            <Label Grid.Column="1" Content="Your field" HorizontalAlignment="Right"/>
+        </Grid>
+        <Grid Background="LightSteelBlue">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <uc:CoordinateBottomLabel Grid.Column="0" Margin="25 0 0 0"/>
+            <uc:CoordinateBottomLabel Grid.Column="1" HorizontalAlignment="Right"/>
+        </Grid>
+        <!-- Play areas -->
         <StackPanel x:Name="MainStackPanel" Orientation="Horizontal" Background="LightSteelBlue">
-            <Label Content="Enemy Field"/>
+            <uc:CoordinateSideLabel/>
+            <!-- Enemy ship view -->
             <StackPanel x:Name="HitAreaStackPanel"
                         MinHeight="400"
                         MinWidth="400"
                         Margin="10 10 5 10"
                         Background="AliceBlue"
                         Orientation="Horizontal"/>
-            <Label Content="Your field"/>
+            <!-- Spacer label -->
+            <Label Margin="10 0 10 0"/>
+            <uc:CoordinateSideLabel/>
+            <!-- Player ship view -->
             <StackPanel x:Name="PlayerShipAreaStackPanel"
                         MinHeight="400"
                         MinWidth="400"

@@ -48,6 +48,7 @@ namespace BattleShip.Logical
             new Ship(4, "Battleship", false),
             new Ship(5, "Carrier", false),
         };
+
         /// <summary>
         /// Places a ship on the respective grid at the respective x,y location.
         /// Ships are placed by setting their leftmost or top most point, then add on their length
@@ -271,26 +272,19 @@ namespace BattleShip.Logical
         /// </summary>
         /// <param name="x">The x coordinate of where to 'shoot'</param>
         /// <param name="y">The y coordinate of where to 'shoot'</param>
-        /// <param name="target">The target to base off of. This Playgrid will not be altered</param>
-        /// <param name="affected">The playgrids to alter in state</param>
+        /// <param name="target">The target to base off of</param>
         /// <returns>True if the shot was a hit, false if it missed</returns>
-        public bool Shoot(int x, int y, Playgrid target, params Playgrid[] affected)
+        public bool Shoot(int x, int y, Playgrid target)
         {
             bool hit = false;
             if (target.ValueAt(x,y) == TileState.ShipHere)
             {
-                foreach(Playgrid pg in affected)
-                {
-                    pg.ChangeTile(x, y, TileState.Hit);
-                }
+                target.ChangeTile(x, y, TileState.Hit);
                 hit = true;
             }
             else
             {
-                foreach (Playgrid pg in affected)
-                {
-                    pg.ChangeTile(x, y, TileState.Missed);
-                }
+                target.ChangeTile(x, y, TileState.Missed);
             }
             return hit;
         }
