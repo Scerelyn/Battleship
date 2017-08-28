@@ -277,12 +277,12 @@ namespace BattleShip.Logical
         public bool Shoot(int x, int y, Playgrid target)
         {
             bool hit = false;
-            if (target.ValueAt(x,y) == TileState.ShipHere)
+            if (target.ValueAt(x,y) == TileState.ShipHere && target.ValueAt(x,y) != TileState.Hit)
             {
                 target.ChangeTile(x, y, TileState.Hit);
                 hit = true;
             }
-            else
+            else if (target.ValueAt(x, y) != TileState.Hit) 
             {
                 target.ChangeTile(x, y, TileState.Missed);
             }

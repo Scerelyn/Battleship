@@ -49,6 +49,7 @@ namespace BattleShip
                 //EnemyPlacesShips();
                 //dat.SaveData(Directory.GetCurrentDirectory() + "/file.dat");
                 isGameRunning = true;
+                activeAI = new HardAI(usedData.PlayerShipsGrid);
             } catch(Exception e)
             {
                 MessageBox.Show($"An error occured, here's some messages and stack traces:\n{e.Message} {e.StackTrace}");
@@ -149,6 +150,8 @@ namespace BattleShip
                             if (aimed != TileState.Hit && aimed != TileState.Missed)
                             {
                                 usedData.Shoot(x,y,usedData.EnemyShipsGrid);
+                                Logical.Point p = activeAI.ChoosePoint();
+                                usedData.Shoot(p.X, p.Y, usedData.PlayerShipsGrid);
                             }
                             else
                             {

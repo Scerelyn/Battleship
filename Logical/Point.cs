@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace BattleShip.Logical
 {
+    [Serializable]
     public class Point
     {
         public static readonly int MaxGridX = 9;
