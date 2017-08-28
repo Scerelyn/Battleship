@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="BattleShip.UserControlss.CoordinateSideLabel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BattleShip.UserControlss"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <StackPanel>
+            <!-- Stack panel of labels for coorinate labeling-->
+            <Label Content="A" Height="40" Width="20" Margin="0 10 0 0"/>
+            <Label Content="B" Height="40" Width="20"/>
+            <Label Content="C" Height="40" Width="20"/>
+            <Label Content="D" Height="40" Width="20"/>
+            <Label Content="E" Height="40" Width="20"/>
+            <Label Content="F" Height="40" Width="20"/>
+            <Label Content="G" Height="40" Width="20"/>
+            <Label Content="H" Height="40" Width="20"/>
+            <Label Content="I" Height="40" Width="20"/>
+            <Label Content="J" Height="40" Width="20"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

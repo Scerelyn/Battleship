@@ -1,5 +1,6 @@
 ﻿using BattleShip.Converters;
 using BattleShip.Logical;
+using BattleShip.Logical.AI;
 using BattleShip.Models;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,8 @@ namespace BattleShip
         bool isPlacingShips = false, isGameRunning = false;
         int playerAreaMouseX = 0, playerAreaMouseY = 0;
         Ship activePlaceShip = null;
+        IAIModel activeAI = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -48,7 +51,7 @@ namespace BattleShip
                 isGameRunning = true;
             } catch(Exception e)
             {
-                MessageBox.Show(e.Message + e.StackTrace);
+                MessageBox.Show($"An error occured, here's some messages and stack traces:\n{e.Message} {e.StackTrace}");
             }
         }
 

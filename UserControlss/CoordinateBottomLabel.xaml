@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="BattleShip.UserControlss.CoordinateBottomLabel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BattleShip.UserControlss"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="400">
+    <Grid Height="25" Width="400">
+        <StackPanel Orientation="Horizontal" Height="25">
+            <!-- A stack panel of labels for the coordinates-->
+            <Label Content="1"  Width="40" Height="25"/>
+            <Label Content="2"  Width="40" Height="25"/>
+            <Label Content="3"  Width="40" Height="25"/>
+            <Label Content="4"  Width="40" Height="25"/>
+            <Label Content="5"  Width="40" Height="25"/>
+            <Label Content="6"  Width="40" Height="25"/>
+            <Label Content="7"  Width="40" Height="25"/>
+            <Label Content="8"  Width="40" Height="25"/>
+            <Label Content="9"  Width="40" Height="25"/>
+            <Label Content="10" Width="40" Height="25"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
