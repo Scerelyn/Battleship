@@ -27,6 +27,7 @@ namespace BattleShip.Logical.AI
 
         public Point ChoosePoint()
         {
+            CheckAndClearList();
             if(lastShot != null && playerGrid.ValueAt(lastShot.X, lastShot.Y) == TileState.Hit) //checking to see if the last shot was a hit
             {
                 AddValidSurrounding(lastShot.X, lastShot.Y); //if so, add all surounding points as possible ship locations
@@ -77,6 +78,24 @@ namespace BattleShip.Logical.AI
             {
                 toShoot.Add(new Point(x, y + 1));
             }
+        }
+
+        /// <summary>
+        /// Checks the toShoot list and removes any points that have been already fired at to avoid overlapping points being added and hence wasted turns
+        /// </summary>
+        public void CheckAndClearList()
+        {
+            List<Point> newToShoot = new List<Point>();
+            foreach (Point p in toShoot)
+            {
+                TileState valAtP = playerGrid.ValueAt(p.X, p.Y);
+                if (valAtP != TileState.Missed && valAtP != TileState.Hit) 
+                {
+                    //doing a .remove(p) on toShoot may not have expected behavior on the loop, so add to a new list and replace old list instance would be safer
+                    newToShoot.Add(p);
+                }
+            }
+            toShoot = newToShoot;
         }
     }
 }

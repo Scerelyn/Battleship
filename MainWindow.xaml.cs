@@ -49,7 +49,8 @@ namespace BattleShip
                 //EnemyPlacesShips();
                 //dat.SaveData(Directory.GetCurrentDirectory() + "/file.dat");
                 isGameRunning = true;
-                activeAI = new HardAI(usedData.PlayerShipsGrid);
+                //activeAI = new HardAI(usedData.PlayerShipsGrid);
+                activeAI = new EasyAI(usedData.PlayerShipsGrid);
             } catch(Exception e)
             {
                 MessageBox.Show($"An error occured, here's some messages and stack traces:\n{e.Message} {e.StackTrace}");
@@ -142,11 +143,12 @@ namespace BattleShip
                     Binding b = new Binding("State");
                     b.Converter = t2bObf;
                     r.SetBinding(Rectangle.FillProperty, b);
+                    //Fire on click logic here
                     r.MouseLeftButtonDown += (sender, args) =>
                     {
                         if (isGameRunning)
                         {
-                            TileState aimed = ((Tile)r.DataContext).State;
+                            TileState aimed = ((Tile)r.DataContext).State; //need to lambda because of this line refering to the rectangle
                             if (aimed != TileState.Hit && aimed != TileState.Missed)
                             {
                                 usedData.Shoot(x,y,usedData.EnemyShipsGrid);
@@ -270,6 +272,36 @@ namespace BattleShip
                 }
                 usedData.PlaceShip(s,usedData.EnemyShipsGrid,x,y);
             }
+        }
+
+        /// <summary>
+        /// The click based action called to save the usedData GameData instance to a file
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void DoSave(object sender, RoutedEventHandler args)
+        {
+
+        }
+
+        /// <summary>
+        /// The click based action called to load a GameData instance from a file
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void DoLoad(object sender, RoutedEventArgs args)
+        {
+
+        }
+
+        /// <summary>
+        /// The click based action called to start up a new game
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void DoNewGame(object sender, RoutedEventArgs args)
+        {
+
         }
     }
 }
