@@ -314,6 +314,24 @@ namespace BattleShip.Logical
             stream.Close();
             return loaded;
         }
+
+        /// <summary>
+        /// Returns a Ship instance if a ship has just been sunken
+        /// </summary>
+        /// <param name="ships">A List of Ship instances to check in</param>
+        /// <returns>A Ship instance if its JustSank property is true, or null if no ship has just sunken</returns>
+        public Ship GetJustSank(List<Ship> ships)
+        {
+            foreach (Ship s in ships)
+            {
+                s.IsSunken();
+                if (s.JustSank ?? false)
+                {
+                    return s;
+                }
+            }
+            return null;
+        }
     }
 
     

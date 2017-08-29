@@ -150,8 +150,18 @@ namespace BattleShip
                             if (aimed != TileState.Hit && aimed != TileState.Missed)
                             {
                                 usedData.Shoot(x,y,usedData.EnemyShipsGrid);
+                                Ship youMaybeHit = usedData.GetJustSank(usedData.EnemyShips);
+                                if (youMaybeHit != null)
+                                {
+                                    MessageBox.Show($"You just sank the enemy's {youMaybeHit.Name}!");
+                                }
                                 Logical.Point p = activeAI.ChoosePoint();
                                 usedData.Shoot(p.X, p.Y, usedData.PlayerShipsGrid);
+                                Ship enemyMaybeHit = usedData.GetJustSank(usedData.PlayerShips);
+                                if (enemyMaybeHit != null)
+                                {
+                                    MessageBox.Show($"The enemy sank your {enemyMaybeHit.Name}!");
+                                }
                             }
                             else
                             {
