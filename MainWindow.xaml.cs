@@ -2,10 +2,12 @@
 using BattleShip.Logical;
 using BattleShip.Logical.AI;
 using BattleShip.Models;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -281,7 +283,21 @@ namespace BattleShip
         /// <param name="args"></param>
         public void DoSave(object sender, RoutedEventHandler args)
         {
-
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.FileName = "Save";
+            sfd.DefaultExt = ".btl";
+            sfd.Filter = "Battleship Saves (.btl)|*.btl";
+            bool? result = sfd.ShowDialog();
+            string filepath = "";
+            if ((result ?? false) == true)
+            {
+                filepath = sfd.FileName;
+            }
+            Stream stream = File.Open(filepath, FileMode.Create);
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(stream, usedData);
+            stream.Close();
+            MessageBox.Show("File successfully saved!");
         }
 
         /// <summary>
@@ -291,7 +307,19 @@ namespace BattleShip
         /// <param name="args"></param>
         public void DoLoad(object sender, RoutedEventArgs args)
         {
-
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Battleship Saves (.btl)|*.btl";
+            bool? result = ofd.ShowDialog();
+            string filepath = "";
+            if ((result ?? false) == true)
+            {
+                filepath = ofd.FileName;
+                Stream stream = File.Open(filepath, FileMode.Open);
+                BinaryFormatter formatter = new BinaryFormatter();
+                usedData = (GameData)formatter.Deserialize(stream);
+                stream.Close();
+                MessageBox.Show("File successfully Loaded!");
+            }
         }
 
         /// <summary>
@@ -301,7 +329,16 @@ namespace BattleShip
         /// <param name="args"></param>
         public void DoNewGame(object sender, RoutedEventArgs args)
         {
-
+            usedData = new GameData();
+            NewGameSettingsWindow ngsw = new NewGameSettingsWindow(usedData);
+            bool? result = ngsw.ShowDialog();
+            if ((result ?? false) == true)
+            {
+                activeAI = ngsw.ChoosenAI;
+                EnemyPlacesShips();
+                PlayerPlacesShips();
+                isGameRunning = true;
+            }
         }
     }
 }
