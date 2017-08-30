@@ -7,7 +7,7 @@
         xmlns:uc="clr-namespace:BattleShip.UserControlss"
         mc:Ignorable="d"
         Title="Battleship" SizeToContent="WidthAndHeight">
-    <StackPanel x:Name="BaseStackPanel" Height="500">
+    <StackPanel x:Name="BaseStackPanel" Height="490">
         <Menu>
             <!-- Top menu -->
             <MenuItem Header="File">
@@ -15,13 +15,8 @@
                 <MenuItem Header="_Open Save file" Click="DoLoad"/>
                 <MenuItem Header="_Save game" Click="DoSave"/>
             </MenuItem>
-            <MenuItem Header="Game Settings">
-                <MenuItem Header="AI Difficulty">
-                    <MenuItem x:Name="EasyDifMenuItem" Header="Easy"/>
-                    <MenuItem x:Name="MediumDifMenuItem" Header="Medium"/>
-                    <MenuItem x:Name="HardDifMenuItem" Header="Hard"/>
-                    <MenuItem x:Name="CheatingDifMenuItem" Header="Basically cheating"/>
-                </MenuItem>
+            <MenuItem Header="View">
+                <MenuItem Header="Vertical View" Click="DoRotate"/>
             </MenuItem>
             <MenuItem Header="Debug">
                 <MenuItem Header="Reveal Enemy Ships" Click="DoReveal"/>
@@ -46,6 +41,9 @@
                                 Orientation="Horizontal"/>
                 </StackPanel>
             </StackPanel>
+            
+            <!-- Spacer label -->
+            <Label Margin="20"/>
             
             <!-- Player ship stack panel -->
             <StackPanel Orientation="Vertical">

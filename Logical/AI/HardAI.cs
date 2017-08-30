@@ -97,5 +97,10 @@ namespace BattleShip.Logical.AI
             }
             toShoot = newToShoot;
         }
+
+        public override string ToString()
+        {
+            return DifficultyTitle;
+        }
     }
 }

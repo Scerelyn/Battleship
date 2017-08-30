@@ -36,5 +36,10 @@ namespace BattleShip.Logical.AI
             }
             return randomly;
         }
+
+        public override string ToString()
+        {
+            return DifficultyTitle;
+        }
     }
 }

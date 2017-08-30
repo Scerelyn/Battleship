@@ -16,5 +16,10 @@ namespace BattleShip.Logical.AI
         {
             throw new NotImplementedException();
         }
+
+        public override string ToString()
+        {
+            return DifficultyTitle;
+        }
     }
 }

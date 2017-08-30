@@ -351,10 +351,16 @@ namespace BattleShip
             {
                 activeAI = ngsw.ChoosenAI;
                 FillPlayerGrid();
+                HitAreaStackPanel.Children.Add(new TextBlock() { Text = "Place ships into your area on the right >>>\nRight click to rotate the ship\nThe game will automatically start when all ships are placed" });
                 await PlayerPlacesShips(); //async because the ships should be placed before the enemy grid is filled up
                 FillEnemyGrid();
                 EnemyPlacesShips();
                 isGameRunning = true;
+            }
+            else
+            {
+                HitAreaStackPanel.Children.Add(new Label() { Content = "Go to file and make a new game!" });
+                PlayerShipAreaStackPanel.Children.Add(new Label() { Content = "Go to file and make a new game!" });
             }
         }
 
@@ -390,6 +396,23 @@ namespace BattleShip
                     PlayerShipAreaStackPanel.Children.Add(new Label() { Content = "Go to file and make a new game!" });
                 }
             }
+        }
+
+
+        public void DoRotate(object sender, RoutedEventArgs args)
+        {
+            MenuItem menuItem = (MenuItem)sender;
+            if (MainStackPanel.Orientation == Orientation.Vertical)
+            {
+                MainStackPanel.Orientation = Orientation.Vertical;
+                menuItem.Header = "Horizontal View";
+            }
+            else
+            {
+                MainStackPanel.Orientation = Orientation.Horizontal;
+                menuItem.Header = "Vertical View";
+            }
+
         }
     }
 }
