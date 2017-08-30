@@ -12,6 +12,7 @@ namespace BattleShip.Logical.AI
         private Random rng = new Random();
         private string difficulty = "Basically cheats";
         public string DifficultyTitle { get { return difficulty; } }
+        public Playgrid PlayerGrid { get; set; }
         private Playgrid Playergrid = null;
 
         public CheatingAI(Playgrid playergrid)

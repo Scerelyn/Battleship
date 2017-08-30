@@ -34,29 +34,16 @@ namespace BattleShip
         bool isPlacingShips = false, isGameRunning = false;
         int playerAreaMouseX = 0, playerAreaMouseY = 0;
         Ship activePlaceShip = null;
-        IAIModel activeAI = null;
 
         public MainWindow()
         {
             InitializeComponent();
             try
             {
-                //GameData dat = GameData.LoadData(Directory.GetCurrentDirectory() + "/file.dat");
-                //GameData dat = new GameData();
-                //usedData = dat;
-                //FillGrids();
-
-                //PlayerPlacesShips();
-                //EnemyPlacesShips();
-                //dat.SaveData(Directory.GetCurrentDirectory() + "/file.dat");
-                //isGameRunning = true;
-                //activeAI = new HardAI(usedData.PlayerShipsGrid);
-                //activeAI = new EasyAI(usedData.PlayerShipsGrid);
-
                 NewGame();
             } catch(Exception e)
             {
-                MessageBox.Show($"An error occured, here's some messages and stack traces:\n{e.Message} {e.StackTrace}");
+                MessageBox.Show($"An error occured, here's some messages and stack traces:\n{e.Message} {e.StackTrace}","Error Occured",MessageBoxButton.OK,MessageBoxImage.Error);
             }
         }
 
@@ -160,7 +147,7 @@ namespace BattleShip
                                 {
                                     MessageBox.Show($"You just sank the enemy's {youMaybeHit.Name}!");
                                 }
-                                Logical.Point p = activeAI.ChoosePoint();
+                                Logical.Point p = usedData.ActiveAI.ChoosePoint();
                                 usedData.Shoot(p.X, p.Y, usedData.PlayerShipsGrid);
                                 Ship enemyMaybeHit = usedData.GetJustSank(usedData.PlayerShips);
                                 if (enemyMaybeHit != null)
@@ -187,7 +174,7 @@ namespace BattleShip
         public async Task PlayerPlacesShips()
         {
             isPlacingShips = true;
-
+            FileMenuItem.IsEnabled = false;
             foreach (Ship s in usedData.PlayerShips)
             {
                 activePlaceShip = s;
@@ -198,6 +185,7 @@ namespace BattleShip
 
             isPlacingShips = false;
             activePlaceShip = null;
+            FileMenuItem.IsEnabled = true;
         }
 
         /// <summary>
@@ -285,21 +273,28 @@ namespace BattleShip
         /// <param name="args"></param>
         public void DoSave(object sender, RoutedEventArgs args)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.FileName = "Save";
-            sfd.DefaultExt = ".btl";
-            sfd.Filter = "Battleship Saves (.btl)|*.btl";
-            bool? result = sfd.ShowDialog();
-            string filepath = "";
-            if ((result ?? false) == true)
+            if (HitAreaStackPanel.Children.Count == 0 || PlayerShipAreaStackPanel.Children.Count == 0)
             {
-                filepath = sfd.FileName;
+                MessageBox.Show("Cannot save an empty grid!","Missing Grid data",MessageBoxButton.OK,MessageBoxImage.Error);
             }
-            Stream stream = File.Open(filepath, FileMode.Create);
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(stream, usedData);
-            stream.Close();
-            MessageBox.Show("File successfully saved!");
+            else
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.FileName = "Save";
+                sfd.DefaultExt = ".btl";
+                sfd.Filter = "Battleship Saves (.btl)|*.btl";
+                bool? result = sfd.ShowDialog();
+                string filepath = "";
+                if ((result ?? false) == true)
+                {
+                    filepath = sfd.FileName;
+                    Stream stream = File.Open(filepath, FileMode.Create);
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, usedData);
+                    stream.Close();
+                    MessageBox.Show("File successfully saved!","Save Success");
+                }
+            }
         }
 
         /// <summary>
@@ -319,7 +314,9 @@ namespace BattleShip
                 Stream stream = File.Open(filepath, FileMode.Open);
                 BinaryFormatter formatter = new BinaryFormatter();
                 usedData = (GameData)formatter.Deserialize(stream);
+                usedData.ActiveAI.PlayerGrid = usedData.PlayerShipsGrid;
                 stream.Close();
+                FillGrids();
                 MessageBox.Show("File successfully Loaded!");
             }
         }
@@ -331,16 +328,19 @@ namespace BattleShip
         /// <param name="args"></param>
         public void DoNewGame(object sender, RoutedEventArgs args)
         {
-            NewGame();
+            NewGame(false);
         }
 
         /// <summary>
         /// Creates a new game
         /// </summary>
-        public async void NewGame()
+        /// <param name="loadFileToo">A bool telling whether or not to have the load file option. True (default) to show it, false to hide it</param>
+        public async void NewGame(bool loadFileToo = true)
         {
+            PlayerShipAreaStackPanel.Children.Clear();
+            HitAreaStackPanel.Children.Clear();
             usedData = new GameData();
-            NewGameSettingsWindow ngsw = new NewGameSettingsWindow(usedData);
+            NewGameSettingsWindow ngsw = new NewGameSettingsWindow(loadFileToo);
             ngsw.AIChoiceComboBox.ItemsSource = new List<IAIModel>()
             {
                 new HardAI(usedData.PlayerShipsGrid),
@@ -349,13 +349,22 @@ namespace BattleShip
             bool? result = ngsw.ShowDialog();
             if ((result ?? false) == true)
             {
-                activeAI = ngsw.ChoosenAI;
-                FillPlayerGrid();
-                HitAreaStackPanel.Children.Add(new TextBlock() { Text = "Place ships into your area on the right >>>\nRight click to rotate the ship\nThe game will automatically start when all ships are placed" });
-                await PlayerPlacesShips(); //async because the ships should be placed before the enemy grid is filled up
-                FillEnemyGrid();
-                EnemyPlacesShips();
+                if (ngsw.GameData != null)
+                {
+                    usedData = ngsw.GameData; //implies that a file was loaded
+                }
+                else
+                {
+                    usedData.ActiveAI = ngsw.ChoosenAI;
+                    FillPlayerGrid();
+                    HitAreaStackPanel.Children.Add(new TextBlock() { Text = "Place ships into your area on the other, blue grid area\nRight click to rotate the ship\nThe game will automatically start when all ships are placed" });
+                    await PlayerPlacesShips(); //async because the ships should be placed before the enemy grid is filled up
+                    FillEnemyGrid();
+                    EnemyPlacesShips();
+                }
                 isGameRunning = true;
+                usedData.ActiveAI.PlayerGrid = usedData.PlayerShipsGrid;
+                FillGrids();
             }
             else
             {
@@ -374,7 +383,7 @@ namespace BattleShip
             {
                 if(MessageBox.Show("You win! Play again?", "You am victory", MessageBoxButton.YesNo, MessageBoxImage.Asterisk) == MessageBoxResult.Yes)
                 {
-                    DoNewGame(null, null);
+                    NewGame();
                 }
                 else
                 {
@@ -387,7 +396,7 @@ namespace BattleShip
             {
                 if (MessageBox.Show("You lost. Play again?", "You're lose", MessageBoxButton.YesNo, MessageBoxImage.Asterisk) == MessageBoxResult.Yes)
                 {
-                    DoNewGame(null, null);
+                    NewGame();
                 }
                 else
                 {
@@ -398,7 +407,11 @@ namespace BattleShip
             }
         }
 
-
+        /// <summary>
+        /// Rotates the two grids to and from the vertial and horizontal positions
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         public void DoRotate(object sender, RoutedEventArgs args)
         {
             MenuItem menuItem = (MenuItem)sender;

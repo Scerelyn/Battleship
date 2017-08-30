@@ -1,4 +1,5 @@
-﻿using BattleShip.Models;
+﻿using BattleShip.Logical.AI;
+using BattleShip.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,6 +49,11 @@ namespace BattleShip.Logical
             new Ship(4, "Battleship", false),
             new Ship(5, "Carrier", false),
         };
+
+        /// <summary>
+        /// The IAIModel instance that the player is going agains
+        /// </summary>
+        public IAIModel ActiveAI { get; set; }
 
         /// <summary>
         /// Places a ship on the respective grid at the respective x,y location.

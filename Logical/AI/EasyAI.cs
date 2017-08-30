@@ -16,11 +16,11 @@ namespace BattleShip.Logical.AI
         private Random rng = new Random();
         private string difficulty = "Easy";
         public string DifficultyTitle { get { return difficulty; } }
-        private Playgrid playerGrid;
+        public Playgrid PlayerGrid { get; set; }
 
         public EasyAI(Playgrid playerGrid)
         {
-            this.playerGrid = playerGrid;
+            this.PlayerGrid = playerGrid;
         }
 
         public Point ChoosePoint()
@@ -28,7 +28,7 @@ namespace BattleShip.Logical.AI
             int x = rng.Next(0, Point.MaxGridX + 1);
             int y = rng.Next(0, Point.MaxGridY + 1);
             Point randomly = new Point(x, y); //nothing in to shoot? pick randomly
-            while (playerGrid.ValueAt(x, y) == TileState.Missed || playerGrid.ValueAt(x, y) == TileState.Hit) //but dont hit a point we already hit
+            while (PlayerGrid.ValueAt(x, y) == TileState.Missed || PlayerGrid.ValueAt(x, y) == TileState.Hit) //but dont hit a point we already hit
             {
                 x = rng.Next(0, Point.MaxGridX + 1);
                 y = rng.Next(0, Point.MaxGridY + 1);

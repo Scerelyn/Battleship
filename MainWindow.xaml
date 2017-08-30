@@ -7,10 +7,10 @@
         xmlns:uc="clr-namespace:BattleShip.UserControlss"
         mc:Ignorable="d"
         Title="Battleship" SizeToContent="WidthAndHeight">
-    <StackPanel x:Name="BaseStackPanel">
+    <StackPanel x:Name="BaseStackPanel" Background="LightSteelBlue">
         <Menu>
             <!-- Top menu -->
-            <MenuItem Header="File">
+            <MenuItem Header="File" x:Name="FileMenuItem">
                 <MenuItem Header="_New Game" Click="DoNewGame"/>
                 <MenuItem Header="_Open Save file" Click="DoLoad"/>
                 <MenuItem Header="_Save game" Click="DoSave"/>
@@ -25,7 +25,7 @@
         
         <!-- Play areas -->
         <StackPanel x:Name="MainStackPanel" Orientation="Horizontal" Background="LightSteelBlue">
-            
+
             <!-- Enemy view Stack Panel -->
             <StackPanel Orientation="Vertical">
                 <Label Content="Enemy Field"/>
@@ -42,10 +42,10 @@
                                 Orientation="Horizontal"/>
                 </StackPanel>
             </StackPanel>
-            
+
             <!-- Spacer label -->
             <Label Margin="20"/>
-            
+
             <!-- Player ship stack panel -->
             <StackPanel Orientation="Vertical">
                 <Label Content="Your field" HorizontalAlignment="Right"/>
@@ -62,6 +62,16 @@
                 </StackPanel>
             </StackPanel>
             
+        </StackPanel>
+        <StackPanel x:Name="LogStackPanel" Visibility="Hidden">
+            <Label Content="Event Log:" 
+                   Width="100"
+                   FontSize="18"/>
+            <ScrollViewer Height="170" Width="400">
+                <TextBlock x:Name="LogTextBlock" 
+                           Background="AliceBlue"
+                           FontSize="24"/>
+            </ScrollViewer>
         </StackPanel>
     </StackPanel>
 </Window>
