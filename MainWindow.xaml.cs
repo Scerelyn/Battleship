@@ -404,13 +404,13 @@ namespace BattleShip
             MenuItem menuItem = (MenuItem)sender;
             if (MainStackPanel.Orientation == Orientation.Vertical)
             {
-                MainStackPanel.Orientation = Orientation.Vertical;
-                menuItem.Header = "Horizontal View";
+                MainStackPanel.Orientation = Orientation.Horizontal;
+                menuItem.Header = "Change to Vertical View";
             }
             else
             {
-                MainStackPanel.Orientation = Orientation.Horizontal;
-                menuItem.Header = "Vertical View";
+                MainStackPanel.Orientation = Orientation.Vertical;
+                menuItem.Header = "Change to Horizontal View";
             }
 
         }
