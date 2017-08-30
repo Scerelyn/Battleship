@@ -332,6 +332,39 @@ namespace BattleShip.Logical
             }
             return null;
         }
+
+        /// <summary>
+        /// Returns the winner of the game
+        /// </summary>
+        /// <returns>1 if the player won, 2 if the enemy won, or 0 if neither won/the game is still in progress</returns>
+        public int WhoIsWinner()
+        {
+            bool playerShipsAllDown = true;
+            foreach (Ship ship in PlayerShips)
+            {
+                if (!ship.IsSunken())
+                {
+                    playerShipsAllDown = false;
+                }
+            }
+            bool enemyShipsAllDown = true;
+            foreach (Ship ship in EnemyShips)
+            {
+                if (!ship.IsSunken())
+                {
+                    enemyShipsAllDown = false;
+                }
+            }
+
+            if (!playerShipsAllDown && !enemyShipsAllDown) //if both still have ships, the game is still in progress
+            {
+                return 0;
+            }
+            else
+            {
+                return playerShipsAllDown ? 2 : 1; //if the player has no ships left, the enemy won, otherwise the player won as it is implicitly known both values are not equivalent
+            }
+        }
     }
 
     

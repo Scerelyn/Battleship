@@ -11,9 +11,9 @@
         <Menu>
             <!-- Top menu -->
             <MenuItem Header="File">
-                <MenuItem Header="New Game"/>
-                <MenuItem Header="Open Save file"/>
-                <MenuItem Header="Save game"/>
+                <MenuItem Header="_New Game" Click="DoNewGame"/>
+                <MenuItem Header="_Open Save file" Click="DoLoad"/>
+                <MenuItem Header="_Save game" Click="DoSave"/>
             </MenuItem>
             <MenuItem Header="Game Settings">
                 <MenuItem Header="AI Difficulty">
@@ -27,40 +27,42 @@
                 <MenuItem Header="Reveal Enemy Ships" Click="DoReveal"/>
             </MenuItem>
         </Menu>
-        <Grid Background="LightSteelBlue">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Content="Enemy Field"/>
-            <Label Grid.Row="0" Grid.Column="1" Content="Your field" HorizontalAlignment="Right"/>
-            <uc:CoordinateBottomLabel Grid.Row="1" Grid.Column="0" Margin="25 0 0 0"/>
-            <uc:CoordinateBottomLabel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"/>
-        </Grid>
+        
         <!-- Play areas -->
         <StackPanel x:Name="MainStackPanel" Orientation="Horizontal" Background="LightSteelBlue">
-            <uc:CoordinateSideLabel/>
-            <!-- Enemy ship view -->
-            <StackPanel x:Name="HitAreaStackPanel"
-                        MinHeight="400"
-                        MinWidth="400"
-                        Margin="10 10 5 10"
-                        Background="AliceBlue"
-                        Orientation="Horizontal"/>
-            <!-- Spacer label -->
-            <Label Margin="10 0 10 0"/>
-            <uc:CoordinateSideLabel/>
-            <!-- Player ship view -->
-            <StackPanel x:Name="PlayerShipAreaStackPanel"
-                        MinHeight="400"
-                        MinWidth="400"
-                        Margin="5 10 10 10"
-                        Background="AliceBlue"
-                        Orientation="Horizontal"/>
+            
+            <!-- Enemy view Stack Panel -->
+            <StackPanel Orientation="Vertical">
+                <Label Content="Enemy Field"/>
+                <uc:CoordinateBottomLabel Margin="25 0 0 0"/>
+                <StackPanel Orientation="Horizontal">
+                    <uc:CoordinateSideLabel/>
+                    <!-- Enemy ship view -->
+                    <StackPanel x:Name="HitAreaStackPanel"
+                                MinHeight="400"
+                                MinWidth="400"
+                                Margin="10 10 5 10"
+                                Background="AliceBlue"
+                                Orientation="Horizontal"/>
+                </StackPanel>
+            </StackPanel>
+            
+            <!-- Player ship stack panel -->
+            <StackPanel Orientation="Vertical">
+                <Label Content="Your field" HorizontalAlignment="Right"/>
+                <uc:CoordinateBottomLabel HorizontalAlignment="Right"/>
+                <StackPanel Orientation="Horizontal">
+                    <uc:CoordinateSideLabel/>
+                    <!-- Player ship view -->
+                    <StackPanel x:Name="PlayerShipAreaStackPanel"
+                                MinHeight="400"
+                                MinWidth="400"
+                                Margin="5 10 10 10"
+                                Background="AliceBlue"
+                                Orientation="Horizontal"/>
+                </StackPanel>
+            </StackPanel>
+            
         </StackPanel>
     </StackPanel>
 </Window>

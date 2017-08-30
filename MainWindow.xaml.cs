@@ -41,18 +41,19 @@ namespace BattleShip
             InitializeComponent();
             try
             {
-                GameData dat = GameData.LoadData(Directory.GetCurrentDirectory() + "/file.dat");
+                //GameData dat = GameData.LoadData(Directory.GetCurrentDirectory() + "/file.dat");
                 //GameData dat = new GameData();
-                usedData = dat;
-                FillGrids();
-                //activePlaceShip = usedData.PlayerShips[1];
-                //isPlacingShips = true;
-                PlayerPlacesShips();
+                //usedData = dat;
+                //FillGrids();
+
+                //PlayerPlacesShips();
                 //EnemyPlacesShips();
                 //dat.SaveData(Directory.GetCurrentDirectory() + "/file.dat");
-                isGameRunning = true;
+                //isGameRunning = true;
                 //activeAI = new HardAI(usedData.PlayerShipsGrid);
-                activeAI = new EasyAI(usedData.PlayerShipsGrid);
+                //activeAI = new EasyAI(usedData.PlayerShipsGrid);
+
+                NewGame();
             } catch(Exception e)
             {
                 MessageBox.Show($"An error occured, here's some messages and stack traces:\n{e.Message} {e.StackTrace}");
@@ -166,6 +167,7 @@ namespace BattleShip
                                 {
                                     MessageBox.Show($"The enemy sank your {enemyMaybeHit.Name}!");
                                 }
+                                GameEnd();
                             }
                             else
                             {
@@ -182,7 +184,7 @@ namespace BattleShip
         /// <summary>
         /// Has the player place their ships, awaiting until all are placed
         /// </summary>
-        public async void PlayerPlacesShips()
+        public async Task PlayerPlacesShips()
         {
             isPlacingShips = true;
 
@@ -281,7 +283,7 @@ namespace BattleShip
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        public void DoSave(object sender, RoutedEventHandler args)
+        public void DoSave(object sender, RoutedEventArgs args)
         {
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.FileName = "Save";
@@ -329,15 +331,64 @@ namespace BattleShip
         /// <param name="args"></param>
         public void DoNewGame(object sender, RoutedEventArgs args)
         {
+            NewGame();
+        }
+
+        /// <summary>
+        /// Creates a new game
+        /// </summary>
+        public async void NewGame()
+        {
             usedData = new GameData();
             NewGameSettingsWindow ngsw = new NewGameSettingsWindow(usedData);
+            ngsw.AIChoiceComboBox.ItemsSource = new List<IAIModel>()
+            {
+                new HardAI(usedData.PlayerShipsGrid),
+                new EasyAI(usedData.PlayerShipsGrid)
+            };
             bool? result = ngsw.ShowDialog();
             if ((result ?? false) == true)
             {
                 activeAI = ngsw.ChoosenAI;
+                FillPlayerGrid();
+                await PlayerPlacesShips(); //async because the ships should be placed before the enemy grid is filled up
+                FillEnemyGrid();
                 EnemyPlacesShips();
-                PlayerPlacesShips();
                 isGameRunning = true;
+            }
+        }
+
+        /// <summary>
+        /// The method that handles behavior on game end
+        /// </summary>
+        public void GameEnd()
+        {
+            int winner = usedData.WhoIsWinner();
+            if (winner == 1) //player win
+            {
+                if(MessageBox.Show("You win! Play again?", "You am victory", MessageBoxButton.YesNo, MessageBoxImage.Asterisk) == MessageBoxResult.Yes)
+                {
+                    DoNewGame(null, null);
+                }
+                else
+                {
+                    PlayerShipAreaStackPanel.Children.Clear();
+                    HitAreaStackPanel.Children.Clear();
+                    PlayerShipAreaStackPanel.Children.Add(new Label() { Content="Go to file and make a new game!"});
+                }
+            }
+            else if (winner == 2) //enemy win
+            {
+                if (MessageBox.Show("You lost. Play again?", "You're lose", MessageBoxButton.YesNo, MessageBoxImage.Asterisk) == MessageBoxResult.Yes)
+                {
+                    DoNewGame(null, null);
+                }
+                else
+                {
+                    PlayerShipAreaStackPanel.Children.Clear();
+                    HitAreaStackPanel.Children.Clear();
+                    PlayerShipAreaStackPanel.Children.Add(new Label() { Content = "Go to file and make a new game!" });
+                }
             }
         }
     }
