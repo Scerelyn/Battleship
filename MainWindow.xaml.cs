@@ -313,7 +313,7 @@ namespace BattleShip
                 SaveFileDialog sfd = new SaveFileDialog();
                 sfd.FileName = "Save";
                 sfd.DefaultExt = ".btl";
-                sfd.Filter = "Battleship Saves (.btl)|*.btl";
+                sfd.Filter = "Battleship Saves (.bshp)|*.bshp";
                 bool? result = sfd.ShowDialog();
                 string filepath = "";
                 if ((result ?? false) == true)
@@ -336,7 +336,7 @@ namespace BattleShip
         public void DoLoad(object sender, RoutedEventArgs args)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Battleship Saves (.btl)|*.btl";
+            ofd.Filter = "Battleship Saves (.bshp)|*.bshp";
             bool? result = ofd.ShowDialog();
             string filepath = "";
             if ((result ?? false) == true)
@@ -400,7 +400,12 @@ namespace BattleShip
                     usedData.ActiveAI = ngsw.ChoosenAI;
                     this.Title = "Battleship AI Level: " + usedData.ActiveAI.ToString();
                     FillPlayerGrid();
-                    HitAreaStackPanel.Children.Add(new TextBlock() { Text = "Place ships into your area on the other, blue grid area\nRight click to rotate the ship\nThe game will automatically start when all ships are placed\n\n\nClick in this area to shoot at the enemy when playing" });
+                    HitAreaStackPanel.Children.Add(new TextBlock() {
+                        Text = "Left click to place ships into your area on the other, blue grid area\n" +
+                        "Right click to rotate the ship\nThe game will automatically start when all ships are placed\n" +
+                        "Placement collisions will be in red and ships cannot be placed if collisions are present" +
+                        "\n\n\nClick in this area to shoot at the enemy when playing"
+                    });
                     await PlayerPlacesShips(); //async because the ships should be placed before the enemy grid is filled up
                     FillEnemyGrid();
                     EnemyPlacesShips();
@@ -435,7 +440,7 @@ namespace BattleShip
             if (winner == 1) //player win
             {
                 TurnIdentifierLabel.Content = "Game ended";
-                TurnIdentifierLabel.Background = Brushes.MidnightBlue;
+                TurnIdentifierLabel.Background = Brushes.RoyalBlue;
                 if(MessageBox.Show("You win! Play again?", "You am victory", MessageBoxButton.YesNo, MessageBoxImage.Asterisk) == MessageBoxResult.Yes)
                 {
                     NewGame();
@@ -450,7 +455,7 @@ namespace BattleShip
             else if (winner == 2) //enemy win
             {
                 TurnIdentifierLabel.Content = "Game ended";
-                TurnIdentifierLabel.Background = Brushes.MidnightBlue;
+                TurnIdentifierLabel.Background = Brushes.RoyalBlue;
                 if (MessageBox.Show("You lost. Play again?", "You're lose", MessageBoxButton.YesNo, MessageBoxImage.Asterisk) == MessageBoxResult.Yes)
                 {
                     NewGame();
