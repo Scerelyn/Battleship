@@ -32,9 +32,8 @@ namespace BattleShip
         TileToBrush t2bUnobf = new TileToBrush();
         TileToBrush t2bObf = new TileToBrush() { IsObfuscated = true };
         bool isPlacingShips = false, isGameRunning = false;
-        int playerAreaMouseX = 0, playerAreaMouseY = 0;
+        int playerAreaMouseX = 0, playerAreaMouseY = 0, hitAreaMouseX = 0, hitAreaMouseY = 0;
         Ship activePlaceShip = null;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -141,19 +140,26 @@ namespace BattleShip
                             TileState aimed = ((Tile)r.DataContext).State; //need to lambda because of this line refering to the rectangle
                             if (aimed != TileState.Hit && aimed != TileState.Missed)
                             {
-                                usedData.Shoot(x,y,usedData.EnemyShipsGrid);
+                                bool youHit = usedData.Shoot(x,y,usedData.EnemyShipsGrid);
+                                usedData.LogInfo = usedData.LogInfo + $"The Player hit point {ToBattleshipPoint(x,y)}";
+                                usedData.LogInfo = usedData.LogInfo + (youHit ? "\nThe Player hits a ship!\n" : "\n");
                                 Ship youMaybeHit = usedData.GetJustSank(usedData.EnemyShips);
                                 if (youMaybeHit != null)
                                 {
-                                    MessageBox.Show($"You just sank the enemy's {youMaybeHit.Name}!");
+                                    usedData.LogInfo = usedData.LogInfo + $" !! The Player sank the enemy's {youMaybeHit.Name}\n";
+                                    //MessageBox.Show($"You just sank the enemy's {youMaybeHit.Name}!");
                                 }
                                 Logical.Point p = usedData.ActiveAI.ChoosePoint();
-                                usedData.Shoot(p.X, p.Y, usedData.PlayerShipsGrid);
+                                bool enemyHit = usedData.Shoot(p.X, p.Y, usedData.PlayerShipsGrid);
+                                usedData.LogInfo = usedData.LogInfo + $"The Enemy hit point {ToBattleshipPoint(p.X, p.Y)}";
+                                usedData.LogInfo = usedData.LogInfo + (enemyHit ? "\nThe Enemy hits a ship!\n" : "\n");
                                 Ship enemyMaybeHit = usedData.GetJustSank(usedData.PlayerShips);
                                 if (enemyMaybeHit != null)
                                 {
-                                    MessageBox.Show($"The enemy sank your {enemyMaybeHit.Name}!");
+                                    usedData.LogInfo = usedData.LogInfo + $" !! The Enemy sank the player's {enemyMaybeHit.Name}\n";
+                                    //MessageBox.Show($"The enemy sank your {enemyMaybeHit.Name}!");
                                 }
+                                LogScrollView.ScrollToBottom();
                                 GameEnd();
                             }
                             else
@@ -161,6 +167,11 @@ namespace BattleShip
                                 MessageBox.Show("You already fired here");
                             }
                         }
+                    };
+                    r.MouseEnter += (sender, args) =>
+                    {
+                        hitAreaMouseX = x;
+                        hitAreaMouseY = y;
                     };
                     sp.Children.Add(r);
                 }
@@ -339,6 +350,7 @@ namespace BattleShip
         {
             PlayerShipAreaStackPanel.Children.Clear();
             HitAreaStackPanel.Children.Clear();
+            LogTextBlock.Text = "";
             usedData = new GameData();
             NewGameSettingsWindow ngsw = new NewGameSettingsWindow(loadFileToo);
             ngsw.AIChoiceComboBox.ItemsSource = new List<IAIModel>()
@@ -364,6 +376,9 @@ namespace BattleShip
                 }
                 isGameRunning = true;
                 usedData.ActiveAI.PlayerGrid = usedData.PlayerShipsGrid;
+                LogStackPanel.DataContext = usedData;
+                Binding b = new Binding("LogInfo");
+                LogTextBlock.SetBinding(TextBlock.TextProperty, b);
                 FillGrids();
             }
             else
@@ -425,7 +440,20 @@ namespace BattleShip
                 MainStackPanel.Orientation = Orientation.Vertical;
                 menuItem.Header = "Change to Horizontal View";
             }
+        }
 
+        /// <summary>
+        /// Converts a pair of cartisian points and converts it into the Battleship equivalent
+        /// </summary>
+        /// <param name="x">The  coordinate of the point to convert</param>
+        /// <param name="y">The  coordinate of the point to convert</param>
+        /// <returns>A string of the given coordinates in [letter]-[number] format that Battleship uses</returns>
+        private string ToBattleshipPoint(int x, int y)
+        {
+            string BSPoint = "";
+            BSPoint += (char)(65 + y);
+            BSPoint += "-" + (x+1);
+            return BSPoint;
         }
     }
 }

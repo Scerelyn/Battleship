@@ -2,6 +2,7 @@
 using BattleShip.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -14,7 +15,7 @@ namespace BattleShip.Logical
     /// <summary>
     /// Stores playgrids for the player and enemy and handles operations on them
     /// </summary>
-    public class GameData
+    public class GameData : INotifyPropertyChanged
     {
         /// <summary>
         /// The Player's ship grid, also acts as their own view of their ship, with enemy activity shown
@@ -32,7 +33,7 @@ namespace BattleShip.Logical
         public List<Ship> PlayerShips { get; private set; } = new List<Ship>()
         {
             new Ship(2, "Destroyer",false),
-            new Ship(3, "Cuiser", false),
+            new Ship(3, "Cruiser", false),
             new Ship(3, "Submarine", false),
             new Ship(4, "Battleship", false),
             new Ship(5, "Carrier", false),
@@ -44,7 +45,7 @@ namespace BattleShip.Logical
         public List<Ship> EnemyShips { get; private set; } = new List<Ship>()
         {
             new Ship(2, "Destroyer",false),
-            new Ship(3, "Cuiser", false),
+            new Ship(3, "Cruiser", false),
             new Ship(3, "Submarine", false),
             new Ship(4, "Battleship", false),
             new Ship(5, "Carrier", false),
@@ -55,6 +56,19 @@ namespace BattleShip.Logical
         /// </summary>
         public IAIModel ActiveAI { get; set; }
 
+        private string logInfo = "";
+        public string LogInfo
+        {
+            get
+            {
+                return logInfo;
+            }
+            set
+            {
+                logInfo = value;
+                FieldChanged();
+            }
+        }
         /// <summary>
         /// Places a ship on the respective grid at the respective x,y location.
         /// Ships are placed by setting their leftmost or top most point, then add on their length
@@ -369,6 +383,19 @@ namespace BattleShip.Logical
             else
             {
                 return playerShipsAllDown ? 2 : 1; //if the player has no ships left, the enemy won, otherwise the player won as it is implicitly known both values are not equivalent
+            }
+        }
+
+        [field: NonSerialized]
+        /// <summary>
+        /// Field changing event
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void FieldChanged(string field = null)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(field));
             }
         }
     }

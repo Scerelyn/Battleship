@@ -63,14 +63,14 @@
             </StackPanel>
             
         </StackPanel>
-        <StackPanel x:Name="LogStackPanel" Visibility="Hidden">
+        <StackPanel x:Name="LogStackPanel" Visibility="Visible" Margin="10">
             <Label Content="Event Log:" 
                    Width="100"
                    FontSize="18"/>
-            <ScrollViewer Height="170" Width="400">
+            <ScrollViewer Height="170" Width="400" x:Name="LogScrollView">
                 <TextBlock x:Name="LogTextBlock" 
                            Background="AliceBlue"
-                           FontSize="24"/>
+                           FontSize="14"/>
             </ScrollViewer>
         </StackPanel>
     </StackPanel>
