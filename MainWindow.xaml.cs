@@ -39,7 +39,7 @@ namespace BattleShip
             InitializeComponent();
             try
             {
-                NewGame();
+                NewGame(true,true);
             } catch(Exception e)
             {
                 MessageBox.Show($"An error occured, here's some messages and stack traces:\n{e.Message} {e.StackTrace}","Error Occured",MessageBoxButton.OK,MessageBoxImage.Error);
@@ -346,7 +346,8 @@ namespace BattleShip
         /// Creates a new game
         /// </summary>
         /// <param name="loadFileToo">A bool telling whether or not to have the load file option. True (default) to show it, false to hide it</param>
-        public async void NewGame(bool loadFileToo = true)
+        /// <param name="isStartUp">A bool telling if this is the startup call, which determines if closing this will shutdown the program. True if it is, false (default) if it is not</param>
+        public async void NewGame(bool loadFileToo = true, bool isStartUp = false)
         {
             PlayerShipAreaStackPanel.Children.Clear();
             HitAreaStackPanel.Children.Clear();
@@ -366,10 +367,12 @@ namespace BattleShip
                 if (ngsw.GameData != null)
                 {
                     usedData = ngsw.GameData; //implies that a file was loaded
+                    this.Title = this.Title + "AI Level: " + usedData.ActiveAI.ToString();
                 }
                 else
                 {
                     usedData.ActiveAI = ngsw.ChoosenAI;
+                    this.Title = this.Title + "AI Level: " + usedData.ActiveAI.ToString();
                     FillPlayerGrid();
                     HitAreaStackPanel.Children.Add(new TextBlock() { Text = "Place ships into your area on the other, blue grid area\nRight click to rotate the ship\nThe game will automatically start when all ships are placed" });
                     await PlayerPlacesShips(); //async because the ships should be placed before the enemy grid is filled up
@@ -387,6 +390,10 @@ namespace BattleShip
             {
                 HitAreaStackPanel.Children.Add(new Label() { Content = "Go to file and make a new game!" });
                 PlayerShipAreaStackPanel.Children.Add(new Label() { Content = "Go to file and make a new game!" });
+                if (isStartUp)
+                {
+                    Close();
+                }
             }
         }
 
@@ -456,6 +463,22 @@ namespace BattleShip
             BSPoint += (char)(65 + y);
             BSPoint += "-" + (x+1);
             return BSPoint;
+        }
+
+        public void DoLogVisChange(object sender, RoutedEventArgs args)
+        {
+            MenuItem visChanger = (MenuItem)sender;
+            if (LogStackPanel.Visibility == Visibility.Hidden)
+            {
+                visChanger.Header = "Hide Event Log";
+                LogStackPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                visChanger.Header = "Show Event Log";
+                LogStackPanel.Visibility = Visibility.Hidden;
+            }
+            
         }
     }
 }

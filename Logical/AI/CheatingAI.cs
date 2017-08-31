@@ -14,7 +14,7 @@ namespace BattleShip.Logical.AI
     public class CheatingAI : IAIModel
     {
         private Random rng = new Random();
-        private string difficulty = "Basically cheats";
+        private string difficulty = "Basically cheats, for debugging win/lose states or you're suicidal";
         public string DifficultyTitle { get { return difficulty; } }
         public Playgrid PlayerGrid { get; set; }
         private Playgrid Playergrid = null;

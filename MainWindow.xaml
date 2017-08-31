@@ -17,6 +17,7 @@
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Header="Change to Vertical View" Click="DoRotate"/>
+                <MenuItem Header="Hide Event Log" Click="DoLogVisChange"/>
             </MenuItem>
             <MenuItem Header="Debug">
                 <MenuItem Header="Reveal Enemy Ships" Click="DoReveal"/>
