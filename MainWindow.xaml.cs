@@ -304,7 +304,7 @@ namespace BattleShip
         /// <param name="args"></param>
         public void DoSave(object sender, RoutedEventArgs args)
         {
-            if (HitAreaStackPanel.Children.Count <= 10 || PlayerShipAreaStackPanel.Children.Count <= 10) //not 10x10 means the data is somehow invalid or empty
+            if (HitAreaStackPanel.Children.Count < 10 || PlayerShipAreaStackPanel.Children.Count < 10) //not 10x10 means the data is somehow invalid or empty
             {
                 MessageBox.Show("Cannot save an empty grid!","Missing Grid data",MessageBoxButton.OK,MessageBoxImage.Error);
             }
@@ -476,12 +476,12 @@ namespace BattleShip
             if (MainStackPanel.Orientation == Orientation.Vertical)
             {
                 MainStackPanel.Orientation = Orientation.Horizontal;
-                menuItem.Header = "Change to Vertical View";
+                menuItem.Header = "_Change to Vertical View";
             }
             else
             {
                 MainStackPanel.Orientation = Orientation.Vertical;
-                menuItem.Header = "Change to Horizontal View";
+                menuItem.Header = "_Change to Horizontal View";
             }
         }
 
@@ -509,12 +509,12 @@ namespace BattleShip
             MenuItem visChanger = (MenuItem)sender;
             if (LogStackPanel.Visibility == Visibility.Hidden)
             {
-                visChanger.Header = "Hide Event Log";
+                visChanger.Header = "Hide _Event Log";
                 LogStackPanel.Visibility = Visibility.Visible;
             }
             else
             {
-                visChanger.Header = "Show Event Log";
+                visChanger.Header = "Show _Event Log";
                 LogStackPanel.Visibility = Visibility.Hidden;
             }
             

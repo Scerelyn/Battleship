@@ -10,17 +10,17 @@
     <StackPanel x:Name="BaseStackPanel" Background="LightSteelBlue">
         <Menu>
             <!-- Top menu -->
-            <MenuItem Header="File" x:Name="FileMenuItem">
+            <MenuItem Header="_File" x:Name="FileMenuItem">
                 <MenuItem Header="_New Game" Click="DoNewGame"/>
-                <MenuItem Header="_Open Save file" Click="DoLoad"/>
+                <MenuItem Header="_Load file" Click="DoLoad"/>
                 <MenuItem Header="_Save game" Click="DoSave"/>
             </MenuItem>
-            <MenuItem Header="View">
-                <MenuItem Header="Change to Vertical View" Click="DoRotate"/>
+            <MenuItem Header="_View">
+                <MenuItem Header="_Change to Vertical View" Click="DoRotate"/>
             </MenuItem>
-            <MenuItem Header="Debug">
-                <MenuItem Header="Show Event Log" Click="DoLogVisChange"/>
-                <MenuItem Header="Reveal Enemy Ships" Click="DoReveal"/>
+            <MenuItem Header="_Debug">
+                <MenuItem Header="Show _Event Log" Click="DoLogVisChange"/>
+                <MenuItem Header="_Reveal Enemy Ships" Click="DoReveal"/>
             </MenuItem>
         </Menu>
         
