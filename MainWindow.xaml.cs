@@ -388,15 +388,17 @@ namespace BattleShip
             {
                 if (ngsw.GameData != null)
                 {
-                    usedData = ngsw.GameData; //implies that a file was loaded
-                    this.Title = this.Title + "AI Level: " + usedData.ActiveAI.ToString();
+                    //implies that a file was loaded
+                    usedData = ngsw.GameData;
+                    this.Title = "Battleship AI Level: " + usedData.ActiveAI.ToString();
                     TurnIdentifierLabel.Content = "Your turn";
                     TurnIdentifierLabel.Background = Brushes.LawnGreen;
+                    HitAreaStackPanel.IsEnabled = true;
                 }
                 else
                 {
                     usedData.ActiveAI = ngsw.ChoosenAI;
-                    this.Title = this.Title + "AI Level: " + usedData.ActiveAI.ToString();
+                    this.Title = "Battleship AI Level: " + usedData.ActiveAI.ToString();
                     FillPlayerGrid();
                     HitAreaStackPanel.Children.Add(new TextBlock() { Text = "Place ships into your area on the other, blue grid area\nRight click to rotate the ship\nThe game will automatically start when all ships are placed\n\n\nClick in this area to shoot at the enemy when playing" });
                     await PlayerPlacesShips(); //async because the ships should be placed before the enemy grid is filled up
