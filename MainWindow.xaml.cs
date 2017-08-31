@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -133,15 +134,18 @@ namespace BattleShip
                     b.Converter = t2bObf;
                     r.SetBinding(Rectangle.FillProperty, b);
                     //Fire on click logic here
-                    r.MouseLeftButtonDown += (sender, args) =>
+                    r.MouseLeftButtonDown += async (sender, args) =>
                     {
                         if (isGameRunning)
                         {
                             TileState aimed = ((Tile)r.DataContext).State; //need to lambda because of this line refering to the rectangle
                             if (aimed != TileState.Hit && aimed != TileState.Missed)
                             {
-                                bool youHit = usedData.Shoot(x,y,usedData.EnemyShipsGrid);
-                                usedData.LogInfo = usedData.LogInfo + $"The Player hit point {ToBattleshipPoint(x,y)}";
+                                TurnIdentifierLabel.Content = "Enemy Turn";
+                                TurnIdentifierLabel.Background = Brushes.IndianRed; //Make the turn label very obvious
+                                HitAreaStackPanel.IsEnabled = false; //because of Delay(), the player could make another turn, so disable the stackpanel to prevent this from calling from another rectangle
+                                bool youHit = usedData.Shoot(x, y, usedData.EnemyShipsGrid);
+                                usedData.LogInfo = usedData.LogInfo + $"The Player hit point {ToBattleshipPoint(x, y)}";
                                 usedData.LogInfo = usedData.LogInfo + (youHit ? "\nThe Player hits a ship!\n" : "\n");
                                 Ship youMaybeHit = usedData.GetJustSank(usedData.EnemyShips);
                                 if (youMaybeHit != null)
@@ -149,18 +153,27 @@ namespace BattleShip
                                     usedData.LogInfo = usedData.LogInfo + $" !! The Player sank the enemy's {youMaybeHit.Name}\n";
                                     MessageBox.Show($"You just sank the enemy's {youMaybeHit.Name}!");
                                 }
-                                Logical.Point p = usedData.ActiveAI.ChoosePoint();
-                                bool enemyHit = usedData.Shoot(p.X, p.Y, usedData.PlayerShipsGrid);
-                                usedData.LogInfo = usedData.LogInfo + $"The Enemy hit point {ToBattleshipPoint(p.X, p.Y)}";
-                                usedData.LogInfo = usedData.LogInfo + (enemyHit ? "\nThe Enemy hits a ship!\n" : "\n");
-                                Ship enemyMaybeHit = usedData.GetJustSank(usedData.PlayerShips);
-                                if (enemyMaybeHit != null)
-                                {
-                                    usedData.LogInfo = usedData.LogInfo + $" !! The Enemy sank the player's {enemyMaybeHit.Name}\n";
-                                    MessageBox.Show($"The enemy sank your {enemyMaybeHit.Name}!");
+                                bool playerWin = GameEnd();
+                                
+                                if (!playerWin) { //AI moves if the game didnt end ie the player did not win
+                                    await Delay(new Random().Next(1500)); //Random time to delay to make the AI seem like its 'thinking'
+                                    Logical.Point p = usedData.ActiveAI.ChoosePoint();
+                                    bool enemyHit = usedData.Shoot(p.X, p.Y, usedData.PlayerShipsGrid);
+                                    usedData.LogInfo = usedData.LogInfo + $"The Enemy hit point {ToBattleshipPoint(p.X, p.Y)}";
+                                    usedData.LogInfo = usedData.LogInfo + (enemyHit ? "\nThe Enemy hits a ship!\n" : "\n");
+                                    Ship enemyMaybeHit = usedData.GetJustSank(usedData.PlayerShips);
+                                    if (enemyMaybeHit != null)
+                                    {
+                                        usedData.LogInfo = usedData.LogInfo + $" !! The Enemy sank the player's {enemyMaybeHit.Name}\n";
+                                        MessageBox.Show($"The enemy sank your {enemyMaybeHit.Name}!");
+                                    }
+                                    LogScrollView.ScrollToBottom();
+
+                                    TurnIdentifierLabel.Content = "Your turn";
+                                    TurnIdentifierLabel.Background = Brushes.LawnGreen;
+                                    HitAreaStackPanel.IsEnabled = true;
+                                    GameEnd();
                                 }
-                                LogScrollView.ScrollToBottom();
-                                GameEnd();
                             }
                             else
                             {
@@ -186,6 +199,8 @@ namespace BattleShip
         {
             isPlacingShips = true;
             FileMenuItem.IsEnabled = false;
+            TurnIdentifierLabel.Content = "Place your Ships!";
+            TurnIdentifierLabel.Background = Brushes.LightGoldenrodYellow;
             foreach (Ship s in usedData.PlayerShips)
             {
                 activePlaceShip = s;
@@ -197,6 +212,8 @@ namespace BattleShip
             isPlacingShips = false;
             activePlaceShip = null;
             FileMenuItem.IsEnabled = true;
+            TurnIdentifierLabel.Content = "Your turn";
+            TurnIdentifierLabel.Background = Brushes.LawnGreen;
         }
 
         /// <summary>
@@ -206,6 +223,8 @@ namespace BattleShip
         /// <returns></returns>
         private static Task WhenClicked(UIElement target)
         {
+            //code below is borrowed and modified from the top answer from
+            //https://stackoverflow.com/questions/35514733/wait-until-a-click-event-has-been-fired-c-sharp
             var tcs = new TaskCompletionSource<object>();
             MouseButtonEventHandler onClick = null;
             onClick = (sender, e) =>
@@ -215,6 +234,7 @@ namespace BattleShip
             };
             target.MouseLeftButtonDown += onClick;
             return tcs.Task;
+            //end borrowed code
         }
 
         /// <summary>
@@ -349,6 +369,8 @@ namespace BattleShip
         /// <param name="isStartUp">A bool telling if this is the startup call, which determines if closing this will shutdown the program. True if it is, false (default) if it is not</param>
         public async void NewGame(bool loadFileToo = true, bool isStartUp = false)
         {
+            TurnIdentifierLabel.Content = "New game setup";
+            TurnIdentifierLabel.Background = Brushes.LightYellow;
             PlayerShipAreaStackPanel.Children.Clear();
             HitAreaStackPanel.Children.Clear();
             LogTextBlock.Text = "";
@@ -368,13 +390,15 @@ namespace BattleShip
                 {
                     usedData = ngsw.GameData; //implies that a file was loaded
                     this.Title = this.Title + "AI Level: " + usedData.ActiveAI.ToString();
+                    TurnIdentifierLabel.Content = "Your turn";
+                    TurnIdentifierLabel.Background = Brushes.LawnGreen;
                 }
                 else
                 {
                     usedData.ActiveAI = ngsw.ChoosenAI;
                     this.Title = this.Title + "AI Level: " + usedData.ActiveAI.ToString();
                     FillPlayerGrid();
-                    HitAreaStackPanel.Children.Add(new TextBlock() { Text = "Place ships into your area on the other, blue grid area\nRight click to rotate the ship\nThe game will automatically start when all ships are placed" });
+                    HitAreaStackPanel.Children.Add(new TextBlock() { Text = "Place ships into your area on the other, blue grid area\nRight click to rotate the ship\nThe game will automatically start when all ships are placed\n\n\nClick in this area to shoot at the enemy when playing" });
                     await PlayerPlacesShips(); //async because the ships should be placed before the enemy grid is filled up
                     FillEnemyGrid();
                     EnemyPlacesShips();
@@ -388,8 +412,10 @@ namespace BattleShip
             }
             else
             {
-                HitAreaStackPanel.Children.Add(new Label() { Content = "Go to file and make a new game!" });
-                PlayerShipAreaStackPanel.Children.Add(new Label() { Content = "Go to file and make a new game!" });
+                HitAreaStackPanel.Children.Add(new Label() { Content = "Go to file and make a new game, or close the window" });
+                PlayerShipAreaStackPanel.Children.Add(new Label() { Content = "Go to file and make a new game or close the window" });
+                TurnIdentifierLabel.Content = "Make a new game";
+                TurnIdentifierLabel.Background = Brushes.Orange;
                 if (isStartUp)
                 {
                     Close();
@@ -400,11 +426,14 @@ namespace BattleShip
         /// <summary>
         /// The method that handles behavior on game end
         /// </summary>
-        public void GameEnd()
+        /// <returns>True if the game ended, false if it did not</returns>
+        public bool GameEnd()
         {
             int winner = usedData.WhoIsWinner();
             if (winner == 1) //player win
             {
+                TurnIdentifierLabel.Content = "Game ended";
+                TurnIdentifierLabel.Background = Brushes.MidnightBlue;
                 if(MessageBox.Show("You win! Play again?", "You am victory", MessageBoxButton.YesNo, MessageBoxImage.Asterisk) == MessageBoxResult.Yes)
                 {
                     NewGame();
@@ -418,6 +447,8 @@ namespace BattleShip
             }
             else if (winner == 2) //enemy win
             {
+                TurnIdentifierLabel.Content = "Game ended";
+                TurnIdentifierLabel.Background = Brushes.MidnightBlue;
                 if (MessageBox.Show("You lost. Play again?", "You're lose", MessageBoxButton.YesNo, MessageBoxImage.Asterisk) == MessageBoxResult.Yes)
                 {
                     NewGame();
@@ -429,6 +460,7 @@ namespace BattleShip
                     PlayerShipAreaStackPanel.Children.Add(new Label() { Content = "Go to file and make a new game!" });
                 }
             }
+            return winner != 0;
         }
 
         /// <summary>
@@ -454,8 +486,8 @@ namespace BattleShip
         /// <summary>
         /// Converts a pair of cartisian points and converts it into the Battleship equivalent
         /// </summary>
-        /// <param name="x">The  coordinate of the point to convert</param>
-        /// <param name="y">The  coordinate of the point to convert</param>
+        /// <param name="x">The x coordinate of the point to convert</param>
+        /// <param name="y">The y coordinate of the point to convert</param>
         /// <returns>A string of the given coordinates in [letter]-[number] format that Battleship uses</returns>
         private string ToBattleshipPoint(int x, int y)
         {
@@ -465,6 +497,11 @@ namespace BattleShip
             return BSPoint;
         }
 
+        /// <summary>
+        /// Changes the visibility of the event log stackpanel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         public void DoLogVisChange(object sender, RoutedEventArgs args)
         {
             MenuItem visChanger = (MenuItem)sender;
@@ -479,6 +516,17 @@ namespace BattleShip
                 LogStackPanel.Visibility = Visibility.Hidden;
             }
             
+        }
+
+        /// <summary>
+        /// An async method that causes a basic time based delay
+        /// </summary>
+        /// <param name="delay">Milliseconds to delay</param>
+        public async Task Delay(int delay)
+        {
+            await Task.Run(
+                () => { Thread.Sleep(delay); }
+            );
         }
     }
 }

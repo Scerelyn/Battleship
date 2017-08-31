@@ -17,9 +17,9 @@
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Header="Change to Vertical View" Click="DoRotate"/>
-                <MenuItem Header="Hide Event Log" Click="DoLogVisChange"/>
             </MenuItem>
             <MenuItem Header="Debug">
+                <MenuItem Header="Show Event Log" Click="DoLogVisChange"/>
                 <MenuItem Header="Reveal Enemy Ships" Click="DoReveal"/>
             </MenuItem>
         </Menu>
@@ -29,7 +29,7 @@
 
             <!-- Enemy view Stack Panel -->
             <StackPanel Orientation="Vertical">
-                <Label Content="Enemy Field"/>
+                <Label Content="Enemy Field, shoot here!" FontSize="20"/>
                 <!-- its says bottom but really means horizontal/flat; it used to be on the bottom -->
                 <uc:CoordinateBottomLabel Margin="25 0 0 0"/>
                 <StackPanel Orientation="Horizontal">
@@ -49,7 +49,7 @@
 
             <!-- Player ship stack panel -->
             <StackPanel Orientation="Vertical">
-                <Label Content="Your field" HorizontalAlignment="Right"/>
+                <Label Content="Your field" HorizontalAlignment="Right" FontSize="20"/>
                 <uc:CoordinateBottomLabel HorizontalAlignment="Right"/>
                 <StackPanel Orientation="Horizontal">
                     <uc:CoordinateSideLabel/>
@@ -62,9 +62,13 @@
                                 Orientation="Horizontal"/>
                 </StackPanel>
             </StackPanel>
-            
         </StackPanel>
-        <StackPanel x:Name="LogStackPanel" Visibility="Visible" Margin="10">
+        <Label x:Name="TurnIdentifierLabel" 
+               Content="Startup Phase" 
+               HorizontalAlignment="Center"
+               FontSize="24"
+               Background="Yellow"/>
+        <StackPanel x:Name="LogStackPanel" Visibility="Hidden" Margin="10">
             <Label Content="Event Log:" 
                    Width="100"
                    FontSize="18"/>
