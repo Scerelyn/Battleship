@@ -147,7 +147,7 @@ namespace BattleShip
                                 if (youMaybeHit != null)
                                 {
                                     usedData.LogInfo = usedData.LogInfo + $" !! The Player sank the enemy's {youMaybeHit.Name}\n";
-                                    //MessageBox.Show($"You just sank the enemy's {youMaybeHit.Name}!");
+                                    MessageBox.Show($"You just sank the enemy's {youMaybeHit.Name}!");
                                 }
                                 Logical.Point p = usedData.ActiveAI.ChoosePoint();
                                 bool enemyHit = usedData.Shoot(p.X, p.Y, usedData.PlayerShipsGrid);
@@ -157,7 +157,7 @@ namespace BattleShip
                                 if (enemyMaybeHit != null)
                                 {
                                     usedData.LogInfo = usedData.LogInfo + $" !! The Enemy sank the player's {enemyMaybeHit.Name}\n";
-                                    //MessageBox.Show($"The enemy sank your {enemyMaybeHit.Name}!");
+                                    MessageBox.Show($"The enemy sank your {enemyMaybeHit.Name}!");
                                 }
                                 LogScrollView.ScrollToBottom();
                                 GameEnd();
@@ -284,7 +284,7 @@ namespace BattleShip
         /// <param name="args"></param>
         public void DoSave(object sender, RoutedEventArgs args)
         {
-            if (HitAreaStackPanel.Children.Count == 0 || PlayerShipAreaStackPanel.Children.Count == 0)
+            if (HitAreaStackPanel.Children.Count <= 10 || PlayerShipAreaStackPanel.Children.Count <= 10) //not 10x10 means the data is somehow invalid or empty
             {
                 MessageBox.Show("Cannot save an empty grid!","Missing Grid data",MessageBoxButton.OK,MessageBoxImage.Error);
             }
@@ -355,8 +355,10 @@ namespace BattleShip
             NewGameSettingsWindow ngsw = new NewGameSettingsWindow(loadFileToo);
             ngsw.AIChoiceComboBox.ItemsSource = new List<IAIModel>()
             {
+                new EasyAI(usedData.PlayerShipsGrid),
+                new MediumAI(usedData.PlayerShipsGrid),
                 new HardAI(usedData.PlayerShipsGrid),
-                new EasyAI(usedData.PlayerShipsGrid)
+                new CheatingAI(usedData.PlayerShipsGrid),
             };
             bool? result = ngsw.ShowDialog();
             if ((result ?? false) == true)

@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace BattleShip.Logical.AI
 {
+    [Serializable]
+    /// <summary>
+    /// CheatingAI will simply look for ships directly and fire there, as you'd expect from a cheater
+    /// </summary>
     public class CheatingAI : IAIModel
     {
         private Random rng = new Random();
@@ -22,7 +26,23 @@ namespace BattleShip.Logical.AI
 
         public Point ChoosePoint()
         {
-            throw new NotImplementedException();
+            Point choosen = null;
+            for (int x = 0; x < PlayerGrid.Width; x++)
+            {
+                for (int y = 0; y < PlayerGrid.Height; y++)
+                {
+                    if (PlayerGrid.ValueAt(x,y) == TileState.ShipHere) //just scan and see if a ship is here
+                    {
+                        choosen = new Point(x,y); //then shoot at it
+                    }
+                }
+            }
+            return choosen;
+        }
+
+        public override string ToString()
+        {
+            return DifficultyTitle;
         }
     }
 }
