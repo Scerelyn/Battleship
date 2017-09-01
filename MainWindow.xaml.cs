@@ -349,6 +349,10 @@ namespace BattleShip
                 stream.Close();
                 FillGrids();
                 MessageBox.Show("File successfully Loaded!");
+                HitAreaStackPanel.IsEnabled = true;
+                this.Title = "Battleship AI Level: " + usedData.ActiveAI.ToString();
+                TurnIdentifierLabel.Content = "Your turn";
+                TurnIdentifierLabel.Background = Brushes.LawnGreen;
             }
         }
 
