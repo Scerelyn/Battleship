@@ -36,8 +36,8 @@
                     <uc:CoordinateSideLabel/>
                     <!-- Enemy ship view -->
                     <StackPanel x:Name="HitAreaStackPanel"
-                                MinHeight="400"
-                                MinWidth="400"
+                                MinHeight="300"
+                                MinWidth="300"
                                 Margin="10 10 5 10"
                                 Background="AliceBlue"
                                 Orientation="Horizontal"/>
@@ -45,7 +45,7 @@
             </StackPanel>
 
             <!-- Spacer label -->
-            <Label Margin="20"/>
+            <Label Margin="10"/>
 
             <!-- Player ship stack panel -->
             <StackPanel Orientation="Vertical">
@@ -55,8 +55,8 @@
                     <uc:CoordinateSideLabel/>
                     <!-- Player ship view -->
                     <StackPanel x:Name="PlayerShipAreaStackPanel"
-                                MinHeight="400"
-                                MinWidth="400"
+                                MinHeight="300"
+                                MinWidth="300"
                                 Margin="5 10 10 10"
                                 Background="AliceBlue"
                                 Orientation="Horizontal"/>

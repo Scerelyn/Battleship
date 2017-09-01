@@ -5,8 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BattleShip"
         mc:Ignorable="d"
-        Title="New Game Settings" SizeToContent="WidthAndHeight">
-    <StackPanel>
+        Title="New Game Settings" Height="300" Width="400">
+    <StackPanel Background="LightSteelBlue">
+        <Label Content="Battleship" 
+               HorizontalAlignment="Center"
+               Background="DarkBlue"
+               Foreground="OrangeRed"
+               Margin="20"
+               FontSize="24"/>
+        
         <StackPanel Orientation="Horizontal">
             <Label Content="AI Difficulty" Margin="10"/>
             <ComboBox x:Name="AIChoiceComboBox" 

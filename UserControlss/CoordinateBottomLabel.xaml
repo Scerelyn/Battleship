@@ -9,16 +9,16 @@
     <Grid Height="25" Width="400">
         <StackPanel Orientation="Horizontal" Height="25">
             <!-- A stack panel of labels for the coordinates-->
-            <Label Content="1"  Width="40" Height="25"/>
-            <Label Content="2"  Width="40" Height="25"/>
-            <Label Content="3"  Width="40" Height="25"/>
-            <Label Content="4"  Width="40" Height="25"/>
-            <Label Content="5"  Width="40" Height="25"/>
-            <Label Content="6"  Width="40" Height="25"/>
-            <Label Content="7"  Width="40" Height="25"/>
-            <Label Content="8"  Width="40" Height="25"/>
-            <Label Content="9"  Width="40" Height="25"/>
-            <Label Content="10" Width="40" Height="25"/>
+            <Label Content="1"  Width="30" Height="25"/>
+            <Label Content="2"  Width="30" Height="25"/>
+            <Label Content="3"  Width="30" Height="25"/>
+            <Label Content="4"  Width="30" Height="25"/>
+            <Label Content="5"  Width="30" Height="25"/>
+            <Label Content="6"  Width="30" Height="25"/>
+            <Label Content="7"  Width="30" Height="25"/>
+            <Label Content="8"  Width="30" Height="25"/>
+            <Label Content="9"  Width="30" Height="25"/>
+            <Label Content="10" Width="30" Height="25"/>
         </StackPanel>
     </Grid>
 </UserControl>

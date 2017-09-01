@@ -9,16 +9,16 @@
     <Grid>
         <StackPanel>
             <!-- Stack panel of labels for coorinate labeling-->
-            <Label Content="A" Height="40" Width="20" Margin="0 10 0 0"/>
-            <Label Content="B" Height="40" Width="20"/>
-            <Label Content="C" Height="40" Width="20"/>
-            <Label Content="D" Height="40" Width="20"/>
-            <Label Content="E" Height="40" Width="20"/>
-            <Label Content="F" Height="40" Width="20"/>
-            <Label Content="G" Height="40" Width="20"/>
-            <Label Content="H" Height="40" Width="20"/>
-            <Label Content="I" Height="40" Width="20"/>
-            <Label Content="J" Height="40" Width="20"/>
+            <Label Content="A" Height="30" Width="20" Margin="0 10 0 0"/>
+            <Label Content="B" Height="30" Width="20"/>
+            <Label Content="C" Height="30" Width="20"/>
+            <Label Content="D" Height="30" Width="20"/>
+            <Label Content="E" Height="30" Width="20"/>
+            <Label Content="F" Height="30" Width="20"/>
+            <Label Content="G" Height="30" Width="20"/>
+            <Label Content="H" Height="30" Width="20"/>
+            <Label Content="I" Height="30" Width="20"/>
+            <Label Content="J" Height="30" Width="20"/>
         </StackPanel>
     </Grid>
 </UserControl>
