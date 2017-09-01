@@ -369,6 +369,7 @@ namespace BattleShip
         /// <param name="isStartUp">A bool telling if this is the startup call, which determines if closing this will shutdown the program. True if it is, false (default) if it is not</param>
         public async void NewGame(bool loadFileToo = true, bool isStartUp = false)
         {
+            HitAreaStackPanel.IsEnabled = true;
             TurnIdentifierLabel.Content = "New game setup";
             TurnIdentifierLabel.Background = Brushes.LightYellow;
             PlayerShipAreaStackPanel.Children.Clear();
